@@ -5,6 +5,7 @@ const PORT = 3000;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/html'));
+app.use(express.static('static'));
 
 function renderTemplate(res,tmpl,data){
     res.render(tmpl, data, (err,html) =>{
