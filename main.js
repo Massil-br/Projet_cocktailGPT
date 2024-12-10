@@ -7,6 +7,11 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/html'));
 app.use(express.static('static'));
 
+let data ={
+    User : "massil",
+    IsAdmin : "yes"
+}
+
 function renderTemplate(res,tmpl,data){
     res.render(tmpl, data, (err,html) =>{
         if (err){
@@ -20,7 +25,6 @@ function renderTemplate(res,tmpl,data){
 
 
 app.get('/', (req, res) => {
-    const data = {message: 'Bienvenue sur ma page EJS!'};
     renderTemplate(res, 'index', data)
 });
 
