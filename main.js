@@ -1,7 +1,11 @@
 const express = require('express'); 
 const path = require('path');
 const app = express(); 
-const PORT = 3000; 
+const PORT = 3000;
+const apiRoutes = require('./src/routes/api');
+
+app.use(express.json());
+app.use('/api', apiRoutes);
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/html'));
@@ -9,7 +13,7 @@ app.use(express.static('static'));
 
 let data ={
     User : "massil",
-    IsAdmin : "yes"
+    IsAdmin : "no"
 }
 
 function renderTemplate(res,tmpl,data){
@@ -27,6 +31,7 @@ function renderTemplate(res,tmpl,data){
 app.get('/', (req, res) => {
     renderTemplate(res, 'index', data)
 });
+
 
 app.listen(PORT, () => {
     console.log(`Serveur démarré : http://localhost:${PORT}`);
