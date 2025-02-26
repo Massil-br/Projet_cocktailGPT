@@ -1,8 +1,10 @@
 const express = require('express'); 
+
 const path = require('path');
 const app = express(); 
 const PORT = 3000;
 const apiRoutes = require('./src/routes/api');
+const { verbose } = require('sqlite3');
 
 app.use(express.json());
 app.use('/api', apiRoutes);
@@ -15,6 +17,9 @@ let data ={
     User : "massil",
     IsAdmin : "no"
 }
+
+
+
 
 function renderTemplate(res,tmpl,data){
     res.render(tmpl, data, (err,html) =>{
