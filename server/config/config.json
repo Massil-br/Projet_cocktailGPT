@@ -1,0 +1,14 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "database/CocktailFortnite.db"
+  },
+  "test": {
+    "dialect": "sqlite",
+    "storage": "database/CocktailFortnite.db"
+  },
+  "production": {
+    "dialect": "sqlite",
+    "storage": "database/CocktailFortnite.db"
+  }
+}
