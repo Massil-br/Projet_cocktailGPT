@@ -1,6 +1,7 @@
 const express = require('express'); 
 const path = require('path');
 const app = express(); // app qui gérera le serveur
+const bodyParser = require('body-parser');
 const PORT = 3000; // port de sortie
 const apiRoutes = require('./src/routes/api'); // route vers les router d'api
 const loginRoutes = require('./src/server/LoginTraitment');
@@ -8,6 +9,8 @@ const registerRoutes = require('./src/server/registerTraitment');
 
 
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api', apiRoutes); // application de la route /api pour accéder aux requettes d'api
 app.use('/auth', loginRoutes);
 app.use('/auth', registerRoutes);

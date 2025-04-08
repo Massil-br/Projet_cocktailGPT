@@ -9,31 +9,39 @@
 <body class="bg-dark text-light">
     <%- include('partials/header') %>
     <div class="d-flex justify-content-center align-items-center vh-100">
-        <form action="/auth/registerTraitment" method="post" class="bg-dark text-white p-4 rounded shadow-lg border border-light" style="width: 400px;">
+        <form id="registerForm" action="/auth/registerTraitment" method="post" class="bg-dark text-white p-4 rounded shadow-lg border border-light" style="width: 400px;">
             <h2 class="text-center mb-4">Register</h2>
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username">
+                <input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
                 <div class="form-text text-light">We'll never share your email with anyone else.</div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
             </div>
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password">
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="terms" name="terms">
-                <label class="form-check-label" for="terms">I accept the terms and conditions</label>
+                <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirm your password" required>
             </div>
             <button type="submit" class="btn btn-dark border border-light w-100">Submit</button>
         </form>
     </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                alert('Passwords do not match');
+            }
+        });
+    </script>
 </body>
 </html>
