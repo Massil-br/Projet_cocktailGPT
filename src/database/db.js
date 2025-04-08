@@ -1,7 +1,8 @@
-const sqlite3 = require("sqlite3").verbose();
+import sqlite3 from 'sqlite3';
+sqlite3.verbose();
 
 // Connexion à la base de données SQLite
-const db = new sqlite3.Database("database.db", (err) => {
+export const db = new sqlite3.Database("database.db", (err) => {
     if (err) {
         console.error("Erreur lors de l'ouverture de la base de données:", err.message);
     } else {
@@ -10,7 +11,7 @@ const db = new sqlite3.Database("database.db", (err) => {
 });
 
 // Création des tables
-db.serialize(() => {
+ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
@@ -20,7 +21,7 @@ db.serialize(() => {
         session_token TEXT,
         csrf_token TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        deleted_att DATETIME
+        deleted_at DATETIME
     );`);
 
     db.run(`CREATE TABLE IF NOT EXISTS cocktails (
@@ -31,7 +32,7 @@ db.serialize(() => {
 });
 
 // Fonction pour ajouter un utilisateur
-function addUser(username, email, password, role = "user") {
+export function addUser(username, email, password, role = "user") {
     return new Promise((resolve, reject) => {
         const stmt = db.prepare(
             "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)"
@@ -48,7 +49,7 @@ function addUser(username, email, password, role = "user") {
 }
 
 // Fonction pour récupérer un utilisateur par email
-function getUserByEmail(email) {
+export function getUserByEmail(email) {
     return new Promise((resolve, reject) => {
         db.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
             if (err) {
@@ -61,7 +62,7 @@ function getUserByEmail(email) {
 }
 
 // Fonction pour récupérer tous les utilisateurs
-function getAllUsers() {
+export function getAllUsers() {
     return new Promise((resolve, reject) => {
         db.all("SELECT id, username, email, role, session_token, csrf_token, created_at, deleted_at FROM users", [], (err, rows) => {
             if (err) {
@@ -72,6 +73,6 @@ function getAllUsers() {
         });
     });
 }
-
+export default {db, addUser, getUserByEmail, getAllUsers};
 // Export des fonctions et de la connexion à SQLite
-module.exports = { db, addUser, getUserByEmail, getAllUsers };
+

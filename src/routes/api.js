@@ -1,5 +1,5 @@
-const express = require('express');
-const{getAllCocktails, getCocktailById, createCocktail, updateCocktail, deleteCocktail} = require('../controllers/cocktailController');
+import express from 'express';
+import { getAllCocktails, getCocktailById, createCocktail, updateCocktail, deleteCocktail } from '../controllers/cocktailController.js';
 const router = express.Router();
 
 // route api pour avoir tous les cocktails
@@ -20,4 +20,4 @@ router.delete('/cocktails/:id', deleteCocktail);
 
 
 //export du router pour accéder à l'api
-module.exports = router;
+export default router;
