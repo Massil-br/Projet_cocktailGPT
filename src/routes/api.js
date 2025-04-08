@@ -17,5 +17,7 @@ router.put('/cocktails/:id', updateCocktail);
 //route api pour supprimer un cocktail
 router.delete('/cocktails/:id', deleteCocktail);
 
+
+
 //export du router pour accéder à l'api
 module.exports = router;

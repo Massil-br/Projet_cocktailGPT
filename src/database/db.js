@@ -16,18 +16,18 @@ db.serialize(() => {
         username TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        role TEXT NOT NULL DEFAULT 'user'
-    )`);
+        role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin', 'owner')),
+        session_token TEXT,
+        csrf_token TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        deleted_att DATETIME
+    );`);
 
-    db.run(`CREATE TABLE IF NOT EXISTS recipes (
+    db.run(`CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        description TEXT,
-        ingredients TEXT NOT NULL,
-        instructions TEXT NOT NULL,
-        user_id INTEGER NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    )`);
+        name TEXT NOT NULL,
+        description TEXT
+    );`);
 });
 
 // Fonction pour ajouter un utilisateur
@@ -63,7 +63,7 @@ function getUserByEmail(email) {
 // Fonction pour récupérer tous les utilisateurs
 function getAllUsers() {
     return new Promise((resolve, reject) => {
-        db.all("SELECT id, username, email, role FROM users", [], (err, rows) => {
+        db.all("SELECT id, username, email, role, session_token, csrf_token, created_at, deleted_at FROM users", [], (err, rows) => {
             if (err) {
                 reject(err);
             } else {

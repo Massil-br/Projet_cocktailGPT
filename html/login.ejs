@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <%- include('partials/bootstrap') %>
+   
+</head>
+<body class="bg-dark text-light">
+    <%- include('partials/header') %>
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <form action="/auth/loginTraitment" method="post" class="bg-dark text-white p-4 rounded shadow-lg border border-light" style="width: 400px;">
+            <h2 class="text-center mb-4">Login</h2>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" name = "email" id="email" placeholder="Enter your email">
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name = "password" id="password" placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="btn btn-dark  border border-light w-100">Submit</button>
+        </form>
+    </div>
+</html>
