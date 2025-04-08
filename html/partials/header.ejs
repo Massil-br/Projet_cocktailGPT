@@ -36,12 +36,52 @@
             
         </div>
     </nav>
+    
+    <!-- Section pour afficher l'alerte -->
+    <div id="session-message" class="alert alert-info alert-dismissible fade show" role="alert" style="display: none;">
+        <span id="session-message-text"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 </div>
+
 <style>
     body {
         padding-top: 3.5%; /* Ajustez cette valeur en fonction de la hauteur de votre navbar */
     }
-</style>
     
+    #session-message {
+    position: fixed;
+    top: 10%; /* Position verticale à 10% du haut */
+    left: 50%; /* Centrage horizontal */
+    transform: translateX(-50%); /* Décalage de 50% de la largeur de l'élément */
+    z-index: 1050; /* Assurez-vous que l'alerte soit au-dessus des autres éléments */
+}
+</style>
 
+<script>
+    // Fonction pour obtenir les cookies
+    function getCookie(name) {
+        const cookieArr = document.cookie.split(";");
+        for (let i = 0; i < cookieArr.length; i++) {
+            let cookie = cookieArr[i].trim();
+            if (cookie.startsWith(name + "=")) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return null;
+    }
 
+    // Vérifier si un message de session existe dans les cookies
+    window.onload = function() {
+        const message = getCookie('session_message');
+        if (message) {
+            const decodedMessage = decodeURIComponent(message)
+            // Afficher le message dans l'alerte
+            document.getElementById('session-message-text').textContent = decodedMessage;
+            document.getElementById('session-message').style.display = 'block';
+            
+            // Supprimer le cookie après l'affichage
+            document.cookie = 'session_message=; max-age=0; path=/;';
+        }
+    };
+</script>

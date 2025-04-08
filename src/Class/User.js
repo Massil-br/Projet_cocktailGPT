@@ -1,4 +1,4 @@
-const db = require("../database/db");
+import db from "../database/db";
 
 class User {
     constructor(id,username,email,role){
@@ -27,4 +27,4 @@ class User {
 
 }
 
-module.exports = User;
+export default User;

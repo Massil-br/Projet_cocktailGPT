@@ -22,9 +22,7 @@ router.get('/register', (req,res)=>{
     renderTemplate(res, 'register', data)
 })
 
-router.get('/logout', (req, res)=>{
-    renderTemplate(res, 'logout' , data)
-})
+
 
 
 

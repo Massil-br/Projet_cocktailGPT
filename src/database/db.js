@@ -1,6 +1,28 @@
 import sqlite3 from 'sqlite3';
 sqlite3.verbose();
 
+export function setTempCookie(res, message, maxAge = 5000) {
+    res.cookie('session_message', message, {
+        //httpOnly: true,
+        maxAge: maxAge, // Le cookie expire après 5 secondes
+        sameSite: 'Strict'
+    });
+}
+
+// Fonction utilitaire pour exécuter une requête SQL avec db.run et retourner une promesse
+export function runQuery(sql, params) {
+    return new Promise((resolve, reject) => {
+        db.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this); // Cette fonction renvoie un objet avec "this" pour l'ID de la dernière ligne insérée, etc.
+            }
+        });
+    });
+}
+
+
 // Connexion à la base de données SQLite
 export const db = new sqlite3.Database("database.db", (err) => {
     if (err) {
@@ -19,7 +41,7 @@ export const db = new sqlite3.Database("database.db", (err) => {
         password TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin', 'owner')),
         session_token TEXT,
-        csrf_token TEXT,
+        session_expires_at DATETIME, 
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         deleted_at DATETIME
     );`);
@@ -78,5 +100,5 @@ export function getAllUsers() {
 
 
 export default {db, addUser, getUserByEmail, getAllUsers};
-// Export des fonctions et de la connexion à SQLite
+
 
