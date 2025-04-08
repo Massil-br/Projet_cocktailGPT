@@ -1,46 +1,84 @@
 
+import  {db}    from '../database/db.js' 
 
-// liste temporaire des cocktails
-let cocktails = [
-    {id:1, name : 'Mojito'},
-    {id: 2, name : 'Virgin Mojito'},
-    {id: 3, name: 'tequila'},
-    {id: 4, name: 'Kraa'},
-    {id: 5, name: 'Test'},
-    {id: 6, name: 'MAOAOAO'},
-    {id: 7, name: 'testNodemon'},
-];
+
 
 //fonction permettant d'avoir toues les cocktails
 export function getAllCocktails(req,res){
-    res.status(200).json(cocktails);
+    db.all('SELECT * FROM cocktails', [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.status(200).json(rows);
+    });
 }
 
 
 // fonction permettant d'avoir un cocktail en fonction de l'id
 export function getCocktailById(req, res){
-    const cocktail = cocktails.find(c => c.id === parseInt(req.params.id));
-    if (!cocktail)return res.status(404).json({message: 'Cocktail non trouvé'});
-    res.status(200).json(cocktail);
+    const id = parseInt(req.params.id);
+
+    db.get('SELECT * FROM cocktails WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        if (!row) {
+            return res.status(404).json({ message: 'Cocktail non trouvé' });
+        }
+        res.status(200).json(row);
+    });
 }
 
 
 // fonction permettant d'ajouter un nouveau cocktail
 export function createCocktail(req,res){
-    const newCocktail = {id: cocktails.length +1 , ...req.body};
-    cocktails.push(newCocktail);
-    res.status(201).json(newCocktail);
+    const { name, description } = req.body;
+
+    // Assurez-vous que les champs nécessaires sont présents
+    if (!name || !description) {
+        return res.status(400).json({ message: 'Le nom et la description sont requis.' });
+    }
+
+    const sql = 'INSERT INTO cocktails (name, description) VALUES (?, ?)';
+    db.run(sql, [name, description], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        // L'ID est automatiquement généré grâce à AUTOINCREMENT dans la table
+        const newCocktail = { id: this.lastID, name, description };
+        res.status(201).json(newCocktail);
+    });
 }
 
 
 //fonction permettant de changer le contenu d'un cocktail
 export function updateCocktail(req,res){
-    let tempID = parseInt(req.params.id);
-    const cocktail = cocktails.find(c => c.id === parseInt(req.params.id));
-    if (!cocktail) return res.status(404).json({message: 'Cocktail non trouvé'});
-    Object.assign(cocktail, req.body);
-    cocktail.id = tempID;
-    res.status(200).json(cocktail);
+    const id = parseInt(req.params.id);
+    const { name, description } = req.body;
+
+    // Vérification si les données nécessaires sont fournies
+    if (!name || !description) {
+        return res.status(400).json({ message: 'Le nom et la description sont requis.' });
+    }
+
+    // Requête UPDATE
+    const sql = 'UPDATE cocktails SET name = ?, description = ? WHERE id = ?';
+    db.run(sql, [name, description, id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ message: 'Cocktail non trouvé' });
+        }
+
+        // Renvoyer le cocktail mis à jour
+        const updatedCocktail = { id, name, description };
+        res.status(200).json(updatedCocktail);
+    });
     
 }
 
@@ -48,15 +86,19 @@ export function updateCocktail(req,res){
 export function deleteCocktail(req, res) {
     const id = parseInt(req.params.id);
 
-    // Supprimer le cocktail
-    const initialLength = cocktails.length;
-    cocktails = cocktails.filter(c => c.id !== id);
+    // Requête DELETE pour supprimer le cocktail par son ID
+    const sql = 'DELETE FROM cocktails WHERE id = ?';
+    db.run(sql, [id], function(err) {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
 
-    // Vérifier si l'élément a été trouvé
-    if (cocktails.length === initialLength) {
-        return res.status(404).json({ message: 'Cocktail non trouvé' });
-    }
+        // Vérifier si un cocktail a été supprimé
+        if (this.changes === 0) {
+            return res.status(404).json({ message: 'Cocktail non trouvé' });
+        }
 
-    // Succès
-    res.status(204).json(cocktails); // Réponse vide pour signaler la suppression
+        // Succès, pas de contenu dans la réponse (204 No Content)
+        res.status(204).send();  // Utilisez .send() pour une réponse vide
+    });
 }

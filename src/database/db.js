@@ -73,6 +73,10 @@ export function getAllUsers() {
         });
     });
 }
+
+
+
+
 export default {db, addUser, getUserByEmail, getAllUsers};
 // Export des fonctions et de la connexion à SQLite
 
