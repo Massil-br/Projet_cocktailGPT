@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import apiRoutes from './src/routes/api.js';
 import authRoutes from './src/routes/authRoutes.js';
 import mainRoutes from './src/routes/mainRoutes.js';
+import { verifySession } from './src/controllers/authController.js';
 
 const PORT = 3000; // port de sortie
 const app = express(); // app qui gérera le serveur
@@ -14,6 +15,11 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(verifySession);
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
 app.use('/api', apiRoutes); // application de la route /api pour accéder aux requêtes d'api
 app.use('/auth', authRoutes);
 app.use('/', mainRoutes);  // Route principale avec les pages

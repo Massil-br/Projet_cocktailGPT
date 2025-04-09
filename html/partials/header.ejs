@@ -24,7 +24,13 @@
             </form>
     
             <div>
-               
+                <% if (user && user.username) { %>
+                    <span class="navbar-text me-3">Bienvenue, <%= user.username %></span>
+                    <a href="/auth/logout" class="btn btn-outline-danger">Déconnexion</a>
+                <% } else { %>
+                    <a href="/register" class="btn btn-outline-light me-2">Inscription</a>
+                    <a href="/login" class="btn btn-outline-light">Connexion</a>
+                <% } %>
             </div>
     
             <a href="/" is="toggle-link" aria-controls="mini-cart" aria-expanded="false" class="header__icon-wrapper tap-area ms-3" aria-label="Cart">

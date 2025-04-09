@@ -118,31 +118,29 @@ export async function verifySession(req, res, next) {
     const token = req.cookies.session_token;
 
     if (!token) {
-        return res.status(401).json({ message: 'Token manquant' });
+        return next(); // Aucun token = utilisateur anonyme
     }
 
     try {
-        const user = await db.get(`SELECT * FROM users WHERE session_token = ?`, [token]);
+        const result = await runQuery(`SELECT * FROM users WHERE session_token = ?`, [token]);
+        const user = result?.[0];
 
-        if (!user) {
-            return res.status(401).json({ message: 'Session invalide' });
-        }
+        if (!user) return next();
 
         const now = new Date();
         const expiresAt = new Date(user.session_expires_at);
 
-        if (expiresAt < now) {
-            return res.status(401).json({ message: 'Session expirée' });
-        }
+        if (expiresAt < now) return next(); // Session expirée
 
-        const newExpiresAt = new Date(now.getTime() + 60 * 60 * 1000); // 1h
+        // Prolonger la session
+        const newExpiresAt = new Date(now.getTime() + 60 * 60 * 1000); // +1h
         const formatted = formatDateToSQL(newExpiresAt);
         await runQuery(`UPDATE users SET session_expires_at = ? WHERE id = ?`, [formatted, user.id]);
 
-        req.user = user;
-        next();
+        req.user = user; // Session OK
     } catch (error) {
-        console.error("Erreur renouvellement session :", error);
-        return res.status(500).json({ message: 'Erreur serveur lors du renouvellement de la session' });
+        console.error("Erreur lors de la vérification de session :", error);
     }
+
+    next();
 }

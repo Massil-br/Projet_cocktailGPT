@@ -90,6 +90,9 @@ export function getUserByEmail(email) {
     });
 }
 
+
+
+
 // Fonction pour récupérer tous les utilisateurs
 export function getAllUsers() {
     return new Promise((resolve, reject) => {

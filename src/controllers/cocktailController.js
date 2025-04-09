@@ -1,4 +1,5 @@
 import { db, setTempCookie, runQuery } from '../database/db.js';
+import { verifySession } from './authController.js';
 
 // Fonction permettant d'avoir tous les cocktails
 export async function getAllCocktails(req, res) {
