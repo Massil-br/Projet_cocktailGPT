@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-import { db,getUserByEmail,getAllUsers,addUser, setTempCookie, runQuery } from '../database/db.js';
+import { db, getUserByEmail, getAllUsers, addUser, setTempCookie, runQuery } from '../database/db.js';
 
-// Fonction pour envoyer un cookie temporaire
+// Utilitaire pour formater les dates en YYYY-MM-DD HH:MM:SS
+function formatDateToSQL(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
 
-// Login
+// --- Login ---
 export async function loginTraitment(req, res) {
     const { email, password } = req.body;
 
@@ -26,24 +30,20 @@ export async function loginTraitment(req, res) {
             return res.status(401).redirect('/login');
         }
 
-        // Génération du token de session
         const sessionToken = uuidv4();
-        const expiresAt = new Date(Date.now() + 1000 * 60 * 60); //1h
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1h
+        const formattedDate = formatDateToSQL(expiresAt);
 
-        // Sauvegarder le token dans la BDD
-        await runQuery(`UPDATE users SET session_token = ?, session_expires_at = ? WHERE id = ?`, [sessionToken, expiresAt, user.id]);
+        await runQuery(`UPDATE users SET session_token = ?, session_expires_at = ? WHERE id = ?`, [sessionToken, formattedDate, user.id]);
 
-        // Définir le cookie HTTP-only avec le token de session
         res.cookie('session_token', sessionToken, {
             httpOnly: true,
-            secure: false, // Pas besoin de HTTPS pour le dev
-            maxAge: 3600000, // 1 heure
+            secure: false, // mettre true si tu utilises HTTPS en prod
+            maxAge: 3600000, // 1h
             sameSite: 'Strict'
         });
 
-        // Message de succès dans un cookie
         setTempCookie(res, 'Login successful');
-
         return res.status(200).redirect('/');
     } catch (error) {
         console.error('Login error:', error);
@@ -52,7 +52,7 @@ export async function loginTraitment(req, res) {
     }
 }
 
-// Registration
+// --- Register ---
 export async function registerTraitment(req, res) {
     const { username, email, password, confirmPassword } = req.body;
 
@@ -74,7 +74,7 @@ export async function registerTraitment(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await addUser(username, email, hashedPassword);
+        await addUser(username, email, hashedPassword);
 
         setTempCookie(res, 'Registration successful');
         return res.status(201).redirect('/login');
@@ -85,19 +85,19 @@ export async function registerTraitment(req, res) {
     }
 }
 
-// Logout
+// --- Logout ---
 export async function logoutTraitment(req, res) {
-    const sessionToken = req.headers.authorization || req.body.session_token;
+    const sessionToken = req.cookies.session_token;
 
     if (!sessionToken) {
         setTempCookie(res, 'Aucun token de session fourni');
         return res.status(400).redirect('/');
     }
 
-    const sql = `UPDATE users SET session_token = NULL WHERE session_token = ?`;
-
     try {
-        const result = await runQuery(sql, [sessionToken]);
+        const result = await runQuery(`UPDATE users SET session_token = NULL, session_expires_at = NULL WHERE session_token = ?`, [sessionToken]);
+
+        res.clearCookie('session_token');
 
         if (result.changes === 0) {
             setTempCookie(res, 'Session introuvable ou déjà expirée');
@@ -113,7 +113,7 @@ export async function logoutTraitment(req, res) {
     }
 }
 
-// Vérification de la session
+// --- Vérification session (middleware) ---
 export async function verifySession(req, res, next) {
     const token = req.cookies.session_token;
 
@@ -136,7 +136,8 @@ export async function verifySession(req, res, next) {
         }
 
         const newExpiresAt = new Date(now.getTime() + 60 * 60 * 1000); // 1h
-        await runQuery(`UPDATE users SET session_expires_at = ? WHERE id = ?`, [newExpiresAt, user.id]);
+        const formatted = formatDateToSQL(newExpiresAt);
+        await runQuery(`UPDATE users SET session_expires_at = ? WHERE id = ?`, [formatted, user.id]);
 
         req.user = user;
         next();

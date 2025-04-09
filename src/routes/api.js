@@ -1,5 +1,6 @@
 import express from 'express';
 import { getAllCocktails, getCocktailById, createCocktail, updateCocktail, deleteCocktail } from '../controllers/cocktailController.js';
+import { authenticateUser } from '../middlewares/auth.js';
 const router = express.Router();
 
 // route api pour avoir tous les cocktails
