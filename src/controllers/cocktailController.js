@@ -7,6 +7,7 @@ export async function getAllCocktails(req, res) {
         res.status(200).json(rows);
     } catch (err) {
         setTempCookie(res, 'Erreur lors de la récupération des cocktails');
+        console.log('Erreur lors de la récupération des cocktails')
         res.status(500).json({ error: err.message });
     }
 }

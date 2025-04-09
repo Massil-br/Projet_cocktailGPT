@@ -12,13 +12,17 @@ export function setTempCookie(res, message, maxAge = 5000) {
 // Fonction utilitaire pour exécuter une requête SQL avec db.run et retourner une promesse
 export function runQuery(sql, params) {
     return new Promise((resolve, reject) => {
-        db.run(sql, params, function (err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(this); // Cette fonction renvoie un objet avec "this" pour l'ID de la dernière ligne insérée, etc.
-            }
-        });
+        if (sql.trim().toUpperCase().startsWith('SELECT')) {
+            db.all(sql, params, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        } else {
+            db.run(sql, params, function (err) {
+                if (err) reject(err);
+                else resolve(this);
+            });
+        }
     });
 }
 
