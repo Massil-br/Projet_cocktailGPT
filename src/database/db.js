@@ -53,7 +53,10 @@ export const db = new sqlite3.Database("database.db", (err) => {
     db.run(`CREATE TABLE IF NOT EXISTS cocktails (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        description TEXT
+        description TEXT,
+        alcohol TEXT CHECK(alcohol IN('alcohol', 'no_alcohol')),
+        ingredients TEXT,
+        recipe TEXT
     );`);
 });
 
