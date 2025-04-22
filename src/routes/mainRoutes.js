@@ -1,6 +1,7 @@
 
 import express from 'express';
 import { renderTemplate } from '../helpers/renderTemplate.js'; 
+import { authenticateUser } from '../middlewares/auth.js';
 
 
 

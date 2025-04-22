@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import apiRoutes from './src/routes/api.js';
 import authRoutes from './src/routes/authRoutes.js';
 import mainRoutes from './src/routes/mainRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
 import { verifySession } from './src/controllers/authController.js';
 
 const PORT = 3000; // port de sortie
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
 });
 app.use('/api', apiRoutes); // application de la route /api pour accéder aux requêtes d'api
 app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
 app.use('/', mainRoutes);  // Route principale avec les pages
 
 app.set('view engine', 'ejs'); // engine ejs pour avoir des pages html dynamiques

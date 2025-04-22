@@ -1,27 +1,41 @@
 import db from '../database/db.js';
+import { runQuery } from '../database/db.js';
 
-export function authenticateUser(req, res, next) {
-    const authHeader = req.headers['authorization'];
+export async function authenticateUser(req, res, next) {
+    const token = req.cookies.session_token;
 
-    // Vérifie le header Authorization: Bearer <token>
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!token) {
         return res.status(401).json({ message: 'Token manquant ou invalide' });
     }
 
-    const token = authHeader.split(' ')[1];
+    try {
+        const rows = await runQuery(
+            "SELECT id, username, email, role FROM users WHERE session_token = ?",
+            [token]
+        );
 
-    // Recherche de l'utilisateur avec ce token
-    db.get("SELECT id, username, email, role FROM users WHERE session_token = ?", [token], (err, user) => {
-        if (err) {
-            return res.status(500).json({ message: 'Erreur serveur' });
-        }
+        const user = rows[0];
 
         if (!user) {
             return res.status(401).json({ message: 'Token invalide' });
         }
 
-        // Ajout des infos utilisateur à la requête
         req.user = user;
-        next(); // Passe à la suite
-    });
+        next();
+    } catch (err) {
+        console.error('Erreur lors de l\'authentification :', err);
+        return res.status(500).json({ message: 'Erreur serveur' });
+    }
+}
+
+export function requireAdmin(req, res, next) {
+    if (!req.user) {
+        return res.status(401).json({ message: 'Utilisateur non authentifié' });
+    }
+
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Accès refusé : droits insuffisants' });
+    }
+
+    next(); 
 }
