@@ -2,11 +2,9 @@ import sqlite3 from 'sqlite3';
 sqlite3.verbose();
 
 export function setTempCookie(res, message, maxAge = 5000) {
-    res.cookie('session_message', message, {
-        //httpOnly: true,
-        maxAge: maxAge, // Le cookie expire après 5 secondes
-        sameSite: 'Strict'
-    });
+    if (res.locals && res.locals.session) {
+        res.locals.session.tempMessage = message;
+    }
 }
 
 // Fonction utilitaire pour exécuter une requête SQL avec db.run et retourner une promesse

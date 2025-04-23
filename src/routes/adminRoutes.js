@@ -4,12 +4,14 @@ import { authenticateUser, requireAdmin } from '../middlewares/auth.js';
 
 
 const router = express.Router();
-let data ={};
+
 router.get('/users',authenticateUser,requireAdmin, (req, res) => {
+    let data ={};
     renderTemplate(res, 'admin/users', data)
 });
 
 router.get('/cocktails',authenticateUser, requireAdmin, (req,res)=>{
+    let data ={};
     renderTemplate(res,'admin/cocktails', data);
 });
 

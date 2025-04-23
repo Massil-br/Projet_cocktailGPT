@@ -36,12 +36,14 @@ export async function loginTraitment(req, res) {
 
         await runQuery(`UPDATE users SET session_token = ?, session_expires_at = ? WHERE id = ?`, [sessionToken, formattedDate, user.id]);
 
-        res.cookie('session_token', sessionToken, {
-            httpOnly: true,
-            secure: false, // mettre true si tu utilises HTTPS en prod
-            maxAge: 3600000, // 1h
-            sameSite: 'Strict'
-        });
+        // Stocker les informations de session
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role
+        };
+        req.session.sessionToken = sessionToken;
 
         setTempCookie(res, 'Login successful');
         return res.status(200).redirect('/');
@@ -87,7 +89,7 @@ export async function registerTraitment(req, res) {
 
 // --- Logout ---
 export async function logoutTraitment(req, res) {
-    const sessionToken = req.cookies.session_token;
+    const sessionToken = req.session.sessionToken;
 
     if (!sessionToken) {
         setTempCookie(res, 'Aucun token de session fourni');
@@ -97,7 +99,12 @@ export async function logoutTraitment(req, res) {
     try {
         const result = await runQuery(`UPDATE users SET session_token = NULL, session_expires_at = NULL WHERE session_token = ?`, [sessionToken]);
 
-        res.clearCookie('session_token');
+        // Détruire la session
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Erreur lors de la destruction de la session:', err);
+            }
+        });
 
         if (result.changes === 0) {
             setTempCookie(res, 'Session introuvable ou déjà expirée');
@@ -115,14 +122,14 @@ export async function logoutTraitment(req, res) {
 
 // --- Vérification session (middleware) ---
 export async function verifySession(req, res, next) {
-    const token = req.cookies.session_token;
+    const sessionToken = req.session.sessionToken;
 
-    if (!token) {
+    if (!sessionToken) {
         return next(); // Aucun token = utilisateur anonyme
     }
 
     try {
-        const result = await runQuery(`SELECT * FROM users WHERE session_token = ?`, [token]);
+        const result = await runQuery(`SELECT * FROM users WHERE session_token = ?`, [sessionToken]);
         const user = result?.[0];
 
         if (!user) return next();
@@ -130,7 +137,10 @@ export async function verifySession(req, res, next) {
         const now = new Date();
         const expiresAt = new Date(user.session_expires_at);
 
-        if (expiresAt < now) return next(); // Session expirée
+        if (expiresAt < now) {
+            req.session.destroy();
+            return next(); // Session expirée
+        }
 
         // Prolonger la session
         const newExpiresAt = new Date(now.getTime() + 60 * 60 * 1000); // +1h

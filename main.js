@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url'; // Import de fileURLToPath
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
+import session from 'express-session';
 import apiRoutes from './src/routes/api.js';
 import authRoutes from './src/routes/authRoutes.js';
 import mainRoutes from './src/routes/mainRoutes.js';
@@ -15,12 +15,41 @@ const app = express(); // app qui gérera le serveur
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
+
+// Configuration de express-session
+app.use(session({
+    secret: 'votre_secret_key', // À changer en production
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Mettre à true en production avec HTTPS
+        maxAge: 3600000 // 1 heure
+    }
+}));
+
+// Middleware pour gérer tempMessage
+app.use((req, res, next) => {
+    if (req.session.tempMessage) {
+        res.locals.tempMessage = req.session.tempMessage;  // Ajoute tempMessage à res.locals pour le rendre disponible dans les vues
+        delete req.session.tempMessage;  // Supprime après affichage
+    } else {
+        res.locals.tempMessage = null;  // Aucun message si tempMessage est absent
+    }
+    next();
+});
+
+// Middleware pour rendre session disponible dans tous les templates
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
 app.use(verifySession);
 app.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
+
 app.use('/api', apiRoutes); // application de la route /api pour accéder aux requêtes d'api
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
@@ -36,4 +65,4 @@ app.use(express.static('static')); // route vers le dossier static pour récupé
 // ouverture du serveur
 app.listen(PORT, () => {
     console.log(`Serveur démarré : http://localhost:${PORT}`);
-});
+}); 

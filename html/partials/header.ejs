@@ -15,6 +15,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
+                    <% if (user &&( user.role == "admin" || user.role == "owner")){%>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                          Admin
@@ -24,6 +25,7 @@
                           <li><a class="dropdown-item" href="/admin/cocktails">Cocktails</a></li>
                         </ul>
                     </div>
+                    <% } %>
                 </ul>
             </div>
     
@@ -74,37 +76,23 @@
 </style>
 
 <script>
-    function getCookie(name) {
-        const cookieArr = document.cookie.split(";");
-        for (let i = 0; i < cookieArr.length; i++) {
-            let cookie = cookieArr[i].trim();
-            if (cookie.startsWith(name + "=")) {
-                return cookie.substring(name.length + 1);
-            }
-        }
-        return null;
-    }
+   const tempMessage = <%- JSON.stringify(tempMessage) %>;
+</script>
 
+<script>
     window.onload = function () {
-        const message = getCookie('session_message');
-        if (message) {
-            const decodedMessage = decodeURIComponent(message);
+        if (tempMessage) {
             const messageBox = document.getElementById('session-message');
             const messageText = document.getElementById('session-message-text');
-
-            messageText.textContent = decodedMessage;
+            messageText.textContent = tempMessage;
             messageBox.style.display = 'block';
 
-            document.cookie = 'session_message=; max-age=0; path=/;';
-
-            // Ajouter une animation de disparition progressive (fade out)
             setTimeout(() => {
-                messageBox.classList.remove('show'); // retire la classe Bootstrap "show"
+                messageBox.classList.remove('show');
                 setTimeout(() => {
                     messageBox.style.display = 'none';
-                }, 500); // attendre la fin de l'animation fade (500ms)
+                }, 500);
             }, 5000);
         }
     };
 </script>
-
