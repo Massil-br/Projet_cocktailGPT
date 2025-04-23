@@ -76,7 +76,7 @@ export async function registerTraitment(req, res) {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await addUser(username, email, hashedPassword, "owner");
+        await addUser(username, email, hashedPassword);
 
         setTempCookie(res, 'Registration successful');
         return res.status(201).redirect('/login');
