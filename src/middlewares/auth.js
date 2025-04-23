@@ -33,7 +33,7 @@ export function requireAdmin(req, res, next) {
         return res.status(401).json({ message: 'Utilisateur non authentifié' });
     }
 
-    if (req.user.role !== 'admin') {
+    if (req.user.role !== 'admin' && req.user.role !=='owner') {
         return res.status(403).json({ message: 'Accès refusé : droits insuffisants' });
     }
 

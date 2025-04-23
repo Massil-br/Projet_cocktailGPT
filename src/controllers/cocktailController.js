@@ -1,5 +1,42 @@
 import { db, setTempCookie, runQuery } from '../database/db.js';
 import { verifySession } from './authController.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+// Configuration de multer pour l'upload d'images
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadDir = 'uploads/cocktails';
+        // Créer le dossier s'il n'existe pas
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        // Générer un nom de fichier unique
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // Limite à 5MB
+    },
+    fileFilter: function (req, file, cb) {
+        // Accepter uniquement les images
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+            return cb(new Error('Seules les images sont autorisées!'), false);
+        }
+        cb(null, true);
+    }
+});
+
+// Middleware pour gérer l'upload
+export const uploadMiddleware = upload.single('image');
 
 // Fonction permettant d'avoir tous les cocktails
 export async function getAllCocktails(req, res) {
@@ -33,22 +70,35 @@ export async function getCocktailById(req, res) {
 // Fonction permettant d'ajouter un nouveau cocktail
 export async function createCocktail(req, res) {
     const { name, description, alcohol, ingredients, recipe } = req.body;
+    const imagePath = req.file ? req.file.path : null;
 
     if (!name || !description || !alcohol || !ingredients || !recipe) {
         setTempCookie(res, 'name, description, alcohol, ingredients, recipe required');
         return res.status(400).json({ message: 'name, description, alcohol, ingredients, recipe required' });
     }
-    if (alcohol  !== 'alcohol' && alcohol !== 'no_alcohol'){
+    if (alcohol !== 'alcohol' && alcohol !== 'no_alcohol') {
         setTempCookie(res, 'alcohol value must be alcohol or no_alcohol');
-        return res.status(400).json({message:'alcohol value must be alcolhol or no_alcohol'})
+        return res.status(400).json({ message: 'alcohol value must be alcohol or no_alcohol' });
     }
 
-    const sql = 'INSERT INTO cocktails (name, description , alcohol, ingredients, recipe) VALUES (?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO cocktails (name, description, alcohol, ingredients, recipe, image) VALUES (?, ?, ?, ?, ?, ?)';
     try {
-        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe]);
-        const newCocktail = { id: result.lastID, name, description, alcohol, ingredients, recipe};
+        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, imagePath]);
+        const newCocktail = { 
+            id: result.lastID, 
+            name, 
+            description, 
+            alcohol, 
+            ingredients, 
+            recipe,
+            image: imagePath 
+        };
         res.status(201).json(newCocktail);
     } catch (err) {
+        // Si une erreur se produit, supprimer l'image uploadée
+        if (imagePath && fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+        }
         setTempCookie(res, 'Erreur lors de la création du cocktail');
         res.status(500).json({ error: err.message });
     }
@@ -58,28 +108,50 @@ export async function createCocktail(req, res) {
 export async function updateCocktail(req, res) {
     const id = parseInt(req.params.id);
     const { name, description, alcohol, ingredients, recipe } = req.body;
+    const imagePath = req.file ? req.file.path : null;
 
     if (!name || !description || !alcohol || !ingredients || !recipe) {
         setTempCookie(res, 'name, description, alcohol, ingredients, recipe required');
         return res.status(400).json({ message: 'name, description, alcohol, ingredients, recipe required' });
     }
-    if (alcohol  !== 'alcohol' && alcohol !== 'no_alcohol'){
+    if (alcohol !== 'alcohol' && alcohol !== 'no_alcohol') {
         setTempCookie(res, 'alcohol value must be alcohol or no_alcohol');
-        return res.status(400).json({message:'alcohol value must be alcolhol or no_alcohol'})
+        return res.status(400).json({ message: 'alcohol value must be alcohol or no_alcohol' });
     }
 
-
-    const sql = 'UPDATE cocktails SET name = ?, description = ?, alcohol = ?, ingredients = ?, recipe = ? WHERE id = ?';
     try {
-        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, id]);
+        // Récupérer l'ancienne image si elle existe
+        const oldCocktail = await runQuery('SELECT image FROM cocktails WHERE id = ?', [id]);
+        const oldImagePath = oldCocktail[0]?.image;
+
+        const sql = 'UPDATE cocktails SET name = ?, description = ?, alcohol = ?, ingredients = ?, recipe = ?, image = ? WHERE id = ?';
+        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, imagePath, id]);
+
         if (result.changes === 0) {
             setTempCookie(res, 'Cocktail non trouvé');
             return res.status(404).json({ message: 'Cocktail non trouvé' });
         }
 
-        const updatedCocktail = { id, name, description,alcohol, ingredients, recipe };
+        // Supprimer l'ancienne image si elle existe et si une nouvelle image a été uploadée
+        if (oldImagePath && imagePath && fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+        }
+
+        const updatedCocktail = { 
+            id, 
+            name, 
+            description, 
+            alcohol, 
+            ingredients, 
+            recipe,
+            image: imagePath 
+        };
         res.status(200).json(updatedCocktail);
     } catch (err) {
+        // Si une erreur se produit, supprimer la nouvelle image uploadée
+        if (imagePath && fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+        }
         setTempCookie(res, 'Erreur lors de la mise à jour du cocktail');
         res.status(500).json({ error: err.message });
     }
@@ -89,15 +161,25 @@ export async function updateCocktail(req, res) {
 export async function deleteCocktail(req, res) {
     const id = parseInt(req.params.id);
 
-    const sql = 'DELETE FROM cocktails WHERE id = ?';
     try {
+        // Récupérer l'image avant de supprimer le cocktail
+        const cocktail = await runQuery('SELECT image FROM cocktails WHERE id = ?', [id]);
+        const imagePath = cocktail[0]?.image;
+
+        const sql = 'DELETE FROM cocktails WHERE id = ?';
         const result = await runQuery(sql, [id]);
+
         if (result.changes === 0) {
             setTempCookie(res, 'Cocktail non trouvé');
             return res.status(404).json({ message: 'Cocktail non trouvé' });
         }
 
-        res.status(204).send();  // Utilise .send() pour une réponse vide
+        // Supprimer l'image si elle existe
+        if (imagePath && fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+        }
+
+        res.status(204).send();
     } catch (err) {
         setTempCookie(res, 'Erreur lors de la suppression du cocktail');
         res.status(500).json({ error: err.message });

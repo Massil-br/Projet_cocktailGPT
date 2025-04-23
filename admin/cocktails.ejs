@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Cocktails</title>
+    <%- include('../partials/bootstrap') %>
+    <%- include('../partials/header') %>
+</head>
+<body class="bg-dark text-light">
+    <div class="container mt-5 pt-5">
+        <h1>Gestion des Cocktails</h1>
+        
+        <div class="mb-3">
+            <button class="btn btn-primary" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un cocktail</button>
+        </div>
+        
+        <div id="addForm" style="display: none;" class="mb-4 p-3 border rounded">
+            <h3>Ajouter un cocktail</h3>
+            <form id="cocktailForm" enctype="multipart/form-data">
+                <div class="mb-2">
+                    <label for="name">Nom:</label>
+                    <input type="text" id="name" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="description">Description:</label>
+                    <textarea id="description" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="alcohol">Type:</label>
+                    <select id="alcohol" class="form-control bg-dark text-light" required>
+                        <option value="alcohol">Avec alcool</option>
+                        <option value="no_alcohol">Sans alcool</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="ingredients">Ingrédients:</label>
+                    <textarea id="ingredients" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="recipe">Recette:</label>
+                    <textarea id="recipe" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="image">Image:</label>
+                    <input type="file" id="image" class="form-control bg-dark text-light" accept="image/*">
+                </div>
+                <button type="button" class="btn btn-success" onclick="saveCocktail()">Enregistrer</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addForm').style.display = 'none'">Annuler</button>
+            </form>
+        </div>
+        
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="cocktailsTableBody">
+                <tr>
+                    <td colspan="6" class="text-center">Chargement...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Charger les cocktails au chargement de la page
+        document.addEventListener('DOMContentLoaded', loadCocktails);
+        
+        function loadCocktails() {
+            fetch('/api/cocktails')
+                .then(response => response.json())
+                .then(cocktails => {
+                    const tableBody = document.getElementById('cocktailsTableBody');
+                    
+                    if (cocktails && cocktails.length > 0) {
+                        let html = '';
+                        cocktails.forEach(cocktail => {
+                            html += `
+                                <tr>
+                                    <td>${cocktail.id}</td>
+                                    <td>
+                                        ${cocktail.image ? 
+                                            `<img src="${cocktail.image}" alt="${cocktail.name}" style="max-width: 50px; max-height: 50px;">` : 
+                                            'Pas d\'image'}
+                                    </td>
+                                    <td>${cocktail.name}</td>
+                                    <td>${cocktail.description}</td>
+                                    <td>${cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteCocktail(${cocktail.id})">Supprimer</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        tableBody.innerHTML = html;
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun cocktail trouvé</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    document.getElementById('cocktailsTableBody').innerHTML = '<tr><td colspan="6" class="text-center">Erreur de chargement</td></tr>';
+                });
+        }
+        
+        function saveCocktail() {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('alcohol', document.getElementById('alcohol').value);
+            formData.append('ingredients', document.getElementById('ingredients').value);
+            formData.append('recipe', document.getElementById('recipe').value);
+            
+            const imageFile = document.getElementById('image').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+            
+            fetch('/api/cocktails', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur lors de la sauvegarde');
+                document.getElementById('cocktailForm').reset();
+                document.getElementById('addForm').style.display = 'none';
+                loadCocktails();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la sauvegarde du cocktail');
+            });
+        }
+        
+        function deleteCocktail(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce cocktail ?')) {
+                fetch(`/api/cocktails/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erreur lors de la suppression');
+                    loadCocktails();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la suppression du cocktail');
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

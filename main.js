@@ -54,6 +54,7 @@ app.use('/api', apiRoutes); // application de la route /api pour accéder aux re
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', mainRoutes);  // Route principale avec les pages
+app.use('/uploads', express.static('uploads'));
 
 app.set('view engine', 'ejs'); // engine ejs pour avoir des pages html dynamiques
 

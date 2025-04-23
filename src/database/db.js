@@ -54,7 +54,8 @@ export const db = new sqlite3.Database("database.db", (err) => {
         description TEXT,
         alcohol TEXT CHECK(alcohol IN('alcohol', 'no_alcohol')),
         ingredients TEXT,
-        recipe TEXT
+        recipe TEXT,
+        image TEXT
     );`);
 });
 
