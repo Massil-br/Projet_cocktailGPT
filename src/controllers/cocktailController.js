@@ -185,3 +185,30 @@ export async function deleteCocktail(req, res) {
         res.status(500).json({ error: err.message });
     }
 }
+
+// Fonction pour récupérer tous les cocktails pour l'affichage
+export async function getCocktailsList(req, res) {
+    try {
+        const sql = 'SELECT id, name, description, image FROM cocktails ORDER BY name ASC';
+        const cocktails = await runQuery(sql, []);
+        
+        // Si la fonction est appelée comme middleware de route API
+        if (res) {
+            return res.status(200).json(cocktails);
+        }
+        
+        // Si la fonction est appelée comme helper pour le template
+        return cocktails;
+    } catch (err) {
+        console.error('Erreur lors de la récupération des cocktails:', err);
+        
+        // Si la fonction est appelée comme middleware de route API
+        if (res) {
+            setTempCookie(res, 'Erreur lors de la récupération des cocktails');
+            return res.status(500).json({ error: err.message });
+        }
+        
+        // Si la fonction est appelée comme helper pour le template
+        throw err;
+    }
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Cocktails</title>
+    <link rel="stylesheet" href="/style.css">
+    
+    <%- include('partials/bootstrap') %>
+    <%- include('partials/header') %>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Liste des Cocktails</h1>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% if (cocktails && cocktails.length > 0) { %>
+                <% cocktails.forEach(cocktail => { %>
+                    <div class="col">
+                        <div class="card h-100">
+                            <% if (cocktail.image) { %>
+                                <img src="<%= cocktail.image %>" class="card-img-top cocktail-image" alt="<%= cocktail.name %>">
+                            <% } else { %>
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center cocktail-image-placeholder">
+                                    <i class="fas fa-glass-martini-alt fa-3x text-muted"></i>
+                                </div>
+                            <% } %>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= cocktail.name %></h5>
+                                <p class="card-text"><%= cocktail.description %></p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="/cocktails/<%= cocktail.id %>" class="btn btn-primary">Voir les détails</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Aucun cocktail trouvé.
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

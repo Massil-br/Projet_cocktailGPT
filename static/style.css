@@ -21,3 +21,14 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+
+.cocktail-image {
+    height: 400px;
+    object-fit: cover;
+    width: 100%;
+}
+.cocktail-image-placeholder {
+    height: 400px;
+    width: 100%;
+}
