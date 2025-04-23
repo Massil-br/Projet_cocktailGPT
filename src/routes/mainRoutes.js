@@ -5,22 +5,22 @@ import { getCocktailsList } from '../controllers/cocktailController.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/',async (req, res) => {
     let data ={};
     renderTemplate(res, 'index', data)
 });
 
-router.get('/contact', (req,res) =>{
+router.get('/contact',async (req,res) =>{
     let data ={};
     renderTemplate(res, 'contact', data)
 });
 
-router.get('/login', (req,res) =>{
+router.get('/login',async (req,res) =>{
     let data ={};
     renderTemplate(res,'login', data)
 });
 
-router.get('/register', (req,res)=>{
+router.get('/register',async (req,res)=>{
     let data ={};
     renderTemplate(res, 'register', data)
 });
