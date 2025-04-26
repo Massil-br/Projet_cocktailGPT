@@ -124,16 +124,19 @@ export async function updateCocktail(req, res) {
         const oldCocktail = await runQuery('SELECT image FROM cocktails WHERE id = ?', [id]);
         const oldImagePath = oldCocktail[0]?.image;
 
+        // Utiliser l'ancienne image si aucune nouvelle image n'est fournie
+        const finalImagePath = imagePath || oldImagePath;
+
         const sql = 'UPDATE cocktails SET name = ?, description = ?, alcohol = ?, ingredients = ?, recipe = ?, image = ? WHERE id = ?';
-        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, imagePath, id]);
+        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, finalImagePath, id]);
 
         if (result.changes === 0) {
             setTempCookie(res, 'Cocktail non trouvé');
             return res.status(404).json({ message: 'Cocktail non trouvé' });
         }
 
-        // Supprimer l'ancienne image si elle existe et si une nouvelle image a été uploadée
-        if (oldImagePath && imagePath && fs.existsSync(oldImagePath)) {
+        // Supprimer l'ancienne image seulement si une nouvelle image a été uploadée
+        if (oldImagePath && imagePath && oldImagePath !== imagePath && fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
         }
 
@@ -144,7 +147,7 @@ export async function updateCocktail(req, res) {
             alcohol, 
             ingredients, 
             recipe,
-            image: imagePath 
+            image: finalImagePath 
         };
         res.status(200).json(updatedCocktail);
     } catch (err) {

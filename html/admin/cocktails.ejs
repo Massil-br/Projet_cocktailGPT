@@ -50,6 +50,42 @@
             </form>
         </div>
         
+        <div id="editForm" style="display: none;" class="mb-4 p-3 border rounded">
+            <h3>Modifier un cocktail</h3>
+            <form id="editCocktailForm" enctype="multipart/form-data">
+                <input type="hidden" id="editId">
+                <div class="mb-2">
+                    <label for="editName">Nom:</label>
+                    <input type="text" id="editName" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="editDescription">Description:</label>
+                    <textarea id="editDescription" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="editAlcohol">Type:</label>
+                    <select id="editAlcohol" class="form-control bg-dark text-light" required>
+                        <option value="alcohol">Avec alcool</option>
+                        <option value="no_alcohol">Sans alcool</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="editIngredients">Ingrédients:</label>
+                    <textarea id="editIngredients" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="editRecipe">Recette:</label>
+                    <textarea id="editRecipe" class="form-control bg-dark text-light" required></textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="editImage">Image:</label>
+                    <input type="file" id="editImage" class="form-control bg-dark text-light" accept="image/*">
+                </div>
+                <button type="button" class="btn btn-success" onclick="updateCocktail()">Mettre à jour</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('editForm').style.display = 'none'">Annuler</button>
+            </form>
+        </div>
+        
         <table class="table table-dark table-striped">
             <thead>
                 <tr>
@@ -95,6 +131,7 @@
                                     <td>${cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool'}</td>
                                     <td>
                                         <button class="btn btn-sm btn-danger" onclick="deleteCocktail(${cocktail.id})">Supprimer</button>
+                                        <button class="btn btn-sm btn-warning" onclick="editCocktail(${cocktail.id})">Modifier</button>
                                     </td>
                                 </tr>
                             `;
@@ -153,6 +190,60 @@
                     alert('Erreur lors de la suppression du cocktail');
                 });
             }
+        }
+
+        function editCocktail(id) {
+            fetch(`/api/cocktails/${id}`)
+                .then(response => response.json())
+                .then(cocktail => {
+                    // La réponse est un tableau, on prend le premier élément
+                    const cocktailData = Array.isArray(cocktail) ? cocktail[0] : cocktail;
+                    
+                    if (!cocktailData) {
+                        throw new Error('Cocktail non trouvé');
+                    }
+
+                    document.getElementById('editId').value = cocktailData.id;
+                    document.getElementById('editName').value = cocktailData.name;
+                    document.getElementById('editDescription').value = cocktailData.description;
+                    document.getElementById('editAlcohol').value = cocktailData.alcohol;
+                    document.getElementById('editIngredients').value = cocktailData.ingredients;
+                    document.getElementById('editRecipe').value = cocktailData.recipe;
+                    document.getElementById('editForm').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors du chargement du cocktail');
+                });
+        }
+
+        function updateCocktail() {
+            const id = document.getElementById('editId').value;
+            const formData = new FormData();
+            formData.append('name', document.getElementById('editName').value);
+            formData.append('description', document.getElementById('editDescription').value);
+            formData.append('alcohol', document.getElementById('editAlcohol').value);
+            formData.append('ingredients', document.getElementById('editIngredients').value);
+            formData.append('recipe', document.getElementById('editRecipe').value);
+            
+            const imageFile = document.getElementById('editImage').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+            
+            fetch(`/api/cocktails/${id}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur lors de la mise à jour');
+                document.getElementById('editForm').style.display = 'none';
+                loadCocktails();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la mise à jour du cocktail');
+            });
         }
     </script>
 </body>
