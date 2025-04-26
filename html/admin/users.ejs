@@ -1,13 +1,277 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>users crud</title>
+    <title>Gestion des Utilisateurs</title>
     <%- include('../partials/bootstrap') %>
     <%- include('../partials/header') %>
 </head>
-<body>
-    <h1>welcome to users crud</h1>
+<body class="bg-dark text-light">
+    <div class="container mt-5 pt-5">
+        <h1>Gestion des Utilisateurs</h1>
+        
+        <!-- Stocker l'ID et le rôle de l'utilisateur connecté dans des éléments cachés -->
+        <input type="hidden" id="currentUserId" value="<%- currentUserId %>">
+        <input type="hidden" id="currentUserRole" value="<%- currentUserRole %>">
+        
+        <div class="mb-3">
+            <button class="btn btn-primary" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un utilisateur</button>
+        </div>
+        
+        <div id="addForm" style="display: none;" class="mb-4 p-3 border rounded">
+            <h3>Ajouter un utilisateur</h3>
+            <form id="userForm">
+                <div class="mb-2">
+                    <label for="username">Nom d'utilisateur:</label>
+                    <input type="text" id="username" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="password">Mot de passe:</label>
+                    <input type="password" id="password" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="role">Rôle:</label>
+                    <select id="role" class="form-control bg-dark text-light" required>
+                        <option value="user">Utilisateur</option>
+                        ${currentUserRole === 'owner' ? `
+                            <option value="admin">Administrateur</option>
+                            <option value="owner">Propriétaire</option>
+                        ` : ''}
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success" onclick="saveUser()">Enregistrer</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('addForm').style.display = 'none'">Annuler</button>
+            </form>
+        </div>
+        
+        <div id="editForm" style="display: none;" class="mb-4 p-3 border rounded">
+            <h3>Modifier un utilisateur</h3>
+            <form id="editUserForm">
+                <input type="hidden" id="editId">
+                <div class="mb-2">
+                    <label for="editUsername">Nom d'utilisateur:</label>
+                    <input type="text" id="editUsername" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" class="form-control bg-dark text-light" required>
+                </div>
+                <div class="mb-2">
+                    <label for="editPassword">Nouveau mot de passe (laisser vide pour ne pas changer):</label>
+                    <input type="password" id="editPassword" class="form-control bg-dark text-light">
+                </div>
+                <div class="mb-2">
+                    <label for="editRole">Rôle:</label>
+                    <select id="editRole" class="form-control bg-dark text-light" required>
+                        <option value="user">Utilisateur</option>
+                        ${currentUserRole === 'owner' ? `
+                            <option value="admin">Administrateur</option>
+                            <option value="owner">Propriétaire</option>
+                        ` : ''}
+                    </select>
+                </div>
+                <button type="button" class="btn btn-success" onclick="updateUser()">Mettre à jour</button>
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('editForm').style.display = 'none'">Annuler</button>
+            </form>
+        </div>
+        
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom d'utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Date de création</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <tr>
+                    <td colspan="6" class="text-center">Chargement...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Charger les utilisateurs au chargement de la page
+        document.addEventListener('DOMContentLoaded', loadUsers);
+        
+        // ID et rôle de l'utilisateur connecté
+        const currentUserId = parseInt(document.getElementById('currentUserId').value);
+        const currentUserRole = document.getElementById('currentUserRole').value;
+        
+        function loadUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(users => {
+                    const tableBody = document.getElementById('usersTableBody');
+                    
+                    if (users && users.length > 0) {
+                        let html = '';
+                        users.forEach(user => {
+                            // Formater la date de création
+                            const createdAt = new Date(user.created_at).toLocaleString('fr-FR');
+                            
+                            // Traduire le rôle
+                            let roleDisplay = '';
+                            switch(user.role) {
+                                case 'user': roleDisplay = 'Utilisateur'; break;
+                                case 'admin': roleDisplay = 'Administrateur'; break;
+                                case 'owner': roleDisplay = 'Propriétaire'; break;
+                                default: roleDisplay = user.role;
+                            }
+                            
+                            // Déterminer les actions disponibles
+                            const isOwner = user.role === 'owner';
+                            const canEdit = (user.id !== currentUserId || currentUserRole === 'owner') && !(currentUserRole === 'admin' && isOwner);
+                            const canDelete = user.id !== currentUserId && !(currentUserRole === 'admin' && isOwner);
+                            
+                            html += `
+                                <tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td>${roleDisplay}</td>
+                                    <td>${createdAt}</td>
+                                    <td>
+                                        ${canDelete ? 
+                                            `<button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Supprimer</button>` : 
+                                            ''}
+                                        ${canEdit ? 
+                                            `<button class="btn btn-sm btn-warning" onclick="editUser(${user.id})">Modifier</button>` : 
+                                            ''}
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        tableBody.innerHTML = html;
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun utilisateur trouvé</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6" class="text-center">Erreur de chargement</td></tr>';
+                });
+        }
+        
+        function saveUser() {
+            const userData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value
+            };
+            
+            fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Erreur lors de la sauvegarde');
+                    });
+                }
+                document.getElementById('userForm').reset();
+                document.getElementById('addForm').style.display = 'none';
+                loadUsers();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert(error.message || 'Erreur lors de la sauvegarde de l\'utilisateur');
+            });
+        }
+        
+        function editUser(id) {
+            fetch(`/api/users/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Erreur lors du chargement');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    document.getElementById('editId').value = user.id;
+                    document.getElementById('editUsername').value = user.username;
+                    document.getElementById('editEmail').value = user.email;
+                    document.getElementById('editRole').value = user.role;
+                    document.getElementById('editPassword').value = ''; // Réinitialiser le mot de passe
+                    document.getElementById('editForm').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Erreur lors du chargement de l\'utilisateur');
+                });
+        }
+        
+        function updateUser() {
+            const id = document.getElementById('editId').value;
+            const userData = {
+                username: document.getElementById('editUsername').value,
+                email: document.getElementById('editEmail').value,
+                role: document.getElementById('editRole').value
+            };
+            
+            // Ajouter le mot de passe seulement s'il est fourni
+            const password = document.getElementById('editPassword').value;
+            if (password) {
+                userData.password = password;
+            }
+            
+            fetch(`/api/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Erreur lors de la mise à jour');
+                    });
+                }
+                document.getElementById('editForm').style.display = 'none';
+                loadUsers();
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert(error.message || 'Erreur lors de la mise à jour de l\'utilisateur');
+            });
+        }
+        
+        function deleteUser(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                fetch(`/api/users/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.message || 'Erreur lors de la suppression');
+                        });
+                    }
+                    loadUsers();
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert(error.message || 'Erreur lors de la suppression de l\'utilisateur');
+                });
+            }
+        }
+    </script>
 </body>
 </html>
