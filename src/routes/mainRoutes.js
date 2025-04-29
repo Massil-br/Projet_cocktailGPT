@@ -1,7 +1,7 @@
 import express from 'express';
 import { renderTemplate } from '../helpers/renderTemplate.js'; 
 import { authenticateUser } from '../middlewares/auth.js';
-import { getCocktailsList } from '../controllers/cocktailController.js';
+import { getCocktailsList, getCocktailDetailsById } from '../controllers/cocktailController.js';
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.get('/register',async (req,res)=>{
     renderTemplate(res, 'register', data)
 });
 
-// Route pour afficher la liste des cocktails
+
 router.get('/cocktailsList', async (req, res) => {
     try {
         const cocktails = await getCocktailsList();
@@ -33,6 +33,25 @@ router.get('/cocktailsList', async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de la récupération des cocktails:', error);
         renderTemplate(res, 'error', { message: 'Erreur lors de la récupération des cocktails' });
+    }
+});
+
+router.get('/cocktailDetail', async (req, res) => {
+    try {
+        const id = parseInt(req.query.id);
+        if (!id) {
+            return renderTemplate(res, 'error', { message: 'ID du cocktail non spécifié' });
+        }
+        
+        const cocktail = await getCocktailDetailsById(id);
+        if (!cocktail) {
+            return renderTemplate(res, 'error', { message: 'Cocktail non trouvé' });
+        }
+        
+        renderTemplate(res, 'cocktailDetail', { cocktail });
+    } catch (error) {
+        console.error('Erreur lors de la récupération du détail du cocktail:', error);
+        renderTemplate(res, 'error', { message: 'Erreur lors de la récupération du détail du cocktail' });
     }
 });
 

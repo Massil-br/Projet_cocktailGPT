@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Cocktail</title>
+    <link rel="stylesheet" href="/style.css">
+    <%- include('partials/bootstrap') %>
+    <%- include('partials/header') %>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="mb-4">Détails du Cocktail</h1>
+                
+                <% if (cocktail) { %>
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <% if (cocktail.image) { %>
+                                    <img src="/<%= cocktail.image %>" class="img-fluid rounded-start" alt="<%= cocktail.name %>">
+                                <% } else { %>
+                                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 300px;">
+                                        <span>Aucune image disponible</span>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h2 class="card-title"><%= cocktail.name %></h2>
+                                    <p class="card-text"><strong>Type:</strong> <%= cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool' %></p>
+                                    
+                                    <h4 class="mt-4">Description</h4>
+                                    <p class="card-text"><%= cocktail.description %></p>
+                                    
+                                    <h4 class="mt-4">Ingrédients</h4>
+                                    <p class="card-text"><%= cocktail.ingredients %></p>
+                                    
+                                    <h4 class="mt-4">Recette</h4>
+                                    <p class="card-text"><%= cocktail.recipe %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="/cocktailsList" class="btn btn-secondary">Retour à la liste</a>
+                    </div>
+                <% } else { %>
+                    <div class="alert alert-danger">
+                        Cocktail non trouvé.
+                    </div>
+                    <a href="/cocktailsList" class="btn btn-secondary">Retour à la liste</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

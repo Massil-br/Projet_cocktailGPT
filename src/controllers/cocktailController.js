@@ -215,3 +215,19 @@ export async function getCocktailsList(req, res) {
         throw err;
     }
 }
+
+// Fonction pour récupérer les détails d'un cocktail par son ID
+export async function getCocktailDetailsById(id) {
+    try {
+        const cocktail = await runQuery('SELECT * FROM cocktails WHERE id = ?', [id]);
+        if (!cocktail || cocktail.length === 0) {
+            return null;
+        }
+        return cocktail[0];
+    } catch (err) {
+        console.error('Erreur lors de la récupération des détails du cocktail:', err);
+        throw err;
+    }
+}
+
+
