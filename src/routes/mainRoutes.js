@@ -1,7 +1,7 @@
 import express from 'express';
 import { renderTemplate } from '../helpers/renderTemplate.js'; 
 import { authenticateUser } from '../middlewares/auth.js';
-import { getCocktailsList, getCocktailDetailsById } from '../controllers/cocktailController.js';
+import { getCocktailsList, getCocktailDetailsById, researchCocktails } from '../controllers/cocktailController.js';
 
 const router = express.Router();
 
@@ -35,6 +35,18 @@ router.get('/cocktailsList', async (req, res) => {
         renderTemplate(res, 'error', { message: 'Erreur lors de la récupération des cocktails' });
     }
 });
+
+router.get('/cocktailsResearch', async(req,res)=>{
+    try{
+        const research = req.query.research;
+        const cocktails = await researchCocktails(research);
+        renderTemplate(res, 'cocktailsList', {cocktails});
+    }catch(error){
+        console.error('erreure lors de la récuparation des cocktails: ',error);
+        renderTemplate(res, 'error', {message:'erreur lors de la récupération des cocktails'});
+    }
+});
+
 
 router.get('/cocktailDetail', async (req, res) => {
     try {

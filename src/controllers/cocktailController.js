@@ -216,6 +216,19 @@ export async function getCocktailsList(req, res) {
     }
 }
 
+export async function researchCocktails(research){
+    try{
+        const sql = 'SELECT id, name, description, image FROM cocktails WHERE name LIKE ?';
+        const cocktails = await runQuery(sql, [`%${research}%`]);
+        return cocktails;
+    }catch (err){
+        console.error('erreur lors de la récupération des détails du cocktail: ', err );$
+        throw err;
+    }
+}
+
+
+
 // Fonction pour récupérer les détails d'un cocktail par son ID
 export async function getCocktailDetailsById(id) {
     try {
