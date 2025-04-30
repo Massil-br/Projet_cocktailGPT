@@ -29,12 +29,15 @@ router.get('/register',async (req,res)=>{
 router.get('/cocktailsList', async (req, res) => {
     try {
         let cocktails;
+        let research;
         if (req.query.research) {
             cocktails = await researchCocktails(req.query.research);
+            research = req.query.research;
         } else {
             cocktails = await getCocktailsList();
+            research = null;
         }
-        renderTemplate(res, 'cocktailsList', { cocktails });
+        renderTemplate(res, 'cocktailsList', { cocktails, research });
     } catch (error) {
         console.error('Erreur lors de la récupération des cocktails:', error);
         renderTemplate(res, 'error', { message: 'Erreur lors de la récupération des cocktails' });
@@ -44,6 +47,7 @@ router.get('/cocktailsList', async (req, res) => {
 router.get('/cocktailDetail', async (req, res) => {
     try {
         const id = parseInt(req.query.id);
+        const research = req.query.research || null;
         if (!id) {
             return renderTemplate(res, 'error', { message: 'ID du cocktail non spécifié' });
         }
@@ -53,7 +57,7 @@ router.get('/cocktailDetail', async (req, res) => {
             return renderTemplate(res, 'error', { message: 'Cocktail non trouvé' });
         }
         
-        renderTemplate(res, 'cocktailDetail', { cocktail });
+        renderTemplate(res, 'cocktailDetail', { cocktail, research });
     } catch (error) {
         console.error('Erreur lors de la récupération du détail du cocktail:', error);
         renderTemplate(res, 'error', { message: 'Erreur lors de la récupération du détail du cocktail' });

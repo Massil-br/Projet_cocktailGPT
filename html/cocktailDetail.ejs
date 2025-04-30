@@ -45,13 +45,13 @@
                     </div>
                     
                     <div class="mt-4">
-                        <a href="/cocktailsList" class="btn btn-secondary">Retour à la liste</a>
+                        <a href="/cocktailsList<%= research ? '?research=' + research : '' %>" class="btn btn-secondary">Retour à la liste</a>
                     </div>
                 <% } else { %>
                     <div class="alert alert-danger">
                         Cocktail non trouvé.
                     </div>
-                    <a href="/cocktailsList" class="btn btn-secondary">Retour à la liste</a>
+                    <a href="/cocktailsList<%= research ? '?research=' + research : '' %>" class="btn btn-secondary">Retour à la liste</a>
                 <% } %>
             </div>
         </div>

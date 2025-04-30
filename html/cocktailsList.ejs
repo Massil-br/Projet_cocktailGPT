@@ -30,7 +30,7 @@
                                 <p class="card-text"><%= cocktail.description %></p>
                             </div>
                             <div class="card-footer">
-                                <a href="/cocktailDetail?id=<%= cocktail.id %>" class="btn btn-primary">Voir les détails</a>
+                                <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn btn-primary">Voir les détails</a>
                             </div>
                         </div>
                     </div>
