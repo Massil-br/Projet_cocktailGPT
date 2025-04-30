@@ -28,25 +28,18 @@ router.get('/register',async (req,res)=>{
 
 router.get('/cocktailsList', async (req, res) => {
     try {
-        const cocktails = await getCocktailsList();
+        let cocktails;
+        if (req.query.research) {
+            cocktails = await researchCocktails(req.query.research);
+        } else {
+            cocktails = await getCocktailsList();
+        }
         renderTemplate(res, 'cocktailsList', { cocktails });
     } catch (error) {
         console.error('Erreur lors de la récupération des cocktails:', error);
         renderTemplate(res, 'error', { message: 'Erreur lors de la récupération des cocktails' });
     }
 });
-
-router.get('/cocktailsResearch', async(req,res)=>{
-    try{
-        const research = req.query.research;
-        const cocktails = await researchCocktails(research);
-        renderTemplate(res, 'cocktailsList', {cocktails});
-    }catch(error){
-        console.error('erreure lors de la récuparation des cocktails: ',error);
-        renderTemplate(res, 'error', {message:'erreur lors de la récupération des cocktails'});
-    }
-});
-
 
 router.get('/cocktailDetail', async (req, res) => {
     try {
