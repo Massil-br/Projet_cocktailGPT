@@ -1,41 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Cocktails</title>
-    <%- include('partials/header') %>
+    
 </head>
-<body>
-    <div class="container">
-        <h1>Liste des Cocktails</h1>
+<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
+    <%- include('partials/header') %>
 
-        <div class="cocktail-grid">
+    <div class="container mt-5 pt-4 pt-md-5"> <!-- pt-4 pour padding en petit écran, pt-md-5 pour plus grand écran -->
+        <h1 class="mb-4">Liste des Cocktails</h1>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             <% if (cocktails && cocktails.length > 0) { %>
                 <% cocktails.forEach(cocktail => { %>
-                    <div class="cocktail-card">
-                        <% if (cocktail.image) { %>
-                            <img src="<%= cocktail.image %>" class="cocktail-image" alt="<%= cocktail.name %>">
-                        <% } else { %>
-                            <div class="cocktail-image-placeholder">
-                                <span>Image non disponible</span>
+                    <div class="col">
+                        <div class="card h-100">
+                            <% if (cocktail.image) { %>
+                                <img src="<%= cocktail.image %>" class="card-img-top cocktail-image" alt="<%= cocktail.name %>">
+                            <% } else { %>
+                                <div class="d-flex justify-content-center align-items-center cocktail-image-placeholder">
+                                    <span>Image non disponible</span>
+                                </div>
+                            <% } %>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= cocktail.name %></h5>
+                                <p class="card-text"><%= cocktail.description %></p>
                             </div>
-                        <% } %>
-                        <div class="cocktail-content">
-                            <h2 class="cocktail-title"><%= cocktail.name %></h2>
-                            <p class="cocktail-description"><%= cocktail.description %></p>
-                        </div>
-                        <div class="cocktail-footer">
-                            <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn btn-primary">Voir les détails</a>
+                            <div class="card-footer text-center">
+                                <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn btn-primary">Voir les détails</a>
+                            </div>
                         </div>
                     </div>
                 <% }); %>
             <% } else { %>
-                <div class="alert alert-info">
+                <div class="alert alert-info col-12">
                     Aucun cocktail trouvé.
                 </div>
             <% } %>
         </div>
     </div>
+
+   
 </body>
 </html>

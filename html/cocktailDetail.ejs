@@ -1,57 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Cocktail</title>
     <%- include('partials/header') %>
 </head>
-<body>
-    <div class="container">
-        <h1>Détails du Cocktail</h1>
+<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Détails du Cocktail</h1>
         
         <% if (cocktail) { %>
-            <div class="cocktail-detail">
-                <div class="cocktail-detail-header">
+            <div class="row">
+                <div class="col-md-6">
                     <% if (cocktail.image) { %>
-                        <img src="/<%= cocktail.image %>" class="cocktail-detail-image" alt="<%= cocktail.name %>">
+                        <img src="/<%= cocktail.image %>" class="img-fluid rounded" alt="<%= cocktail.name %>">
                     <% } else { %>
-                        <div class="cocktail-image-placeholder">
-                            <span>Image non disponible</span>
+                        <div class="d-flex justify-content-center align-items-center bg-light border rounded" style="height: 300px;">
+                            <span class="text-muted">Image non disponible</span>
                         </div>
                     <% } %>
-                    <div class="cocktail-detail-info">
-                        <h2 class="cocktail-detail-title"><%= cocktail.name %></h2>
-                        <p class="cocktail-detail-type">
-                            <strong>Type:</strong> <%= cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool' %>
-                        </p>
-                        
-                        <div class="cocktail-detail-section">
-                            <h4>Description</h4>
-                            <p><%= cocktail.description %></p>
-                        </div>
-                        
-                        <div class="cocktail-detail-section">
-                            <h4>Ingrédients</h4>
-                            <p><%= cocktail.ingredients %></p>
-                        </div>
-                        
-                        <div class="cocktail-detail-section">
-                            <h4>Recette</h4>
-                            <p><%= cocktail.recipe %></p>
-                        </div>
+                </div>
+                <div class="col-md-6">
+                    <h2><%= cocktail.name %></h2>
+                    <p><strong>Type:</strong> <%= cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool' %></p>
+                    
+                    <div class="mt-3">
+                        <h4>Description</h4>
+                        <p><%= cocktail.description %></p>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h4>Ingrédients</h4>
+                        <p><%= cocktail.ingredients %></p>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h4>Recette</h4>
+                        <p><%= cocktail.recipe %></p>
                     </div>
                 </div>
             </div>
             
-            <div class="mt-4">
+            <div class="mt-4 text-center">
                 <a href="/cocktailsList<%= research ? '?research=' + research : '' %>" class="btn btn-secondary">Retour à la liste</a>
             </div>
         <% } else { %>
             <div class="alert alert-danger">
                 Cocktail non trouvé.
             </div>
-            <a href="/cocktailsList<%= research ? '?research=' + research : '' %>" class="btn btn-secondary">Retour à la liste</a>
+            <div class="text-center">
+                <a href="/cocktailsList<%= research ? '?research=' + research : '' %>" class="btn btn-secondary">Retour à la liste</a>
+            </div>
         <% } %>
     </div>
 </body>

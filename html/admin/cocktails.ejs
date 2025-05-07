@@ -6,43 +6,43 @@
     <title>Gestion des Cocktails</title>
     <%- include('../partials/header') %>
 </head>
-<body class="admin-page">
+<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
     <div class="admin-container">
-        <h1>Gestion des Cocktails</h1>
+        <h1 class="text-pink">Gestion des Cocktails</h1>
         
         <div class="admin-actions">
-            <button class="btn btn-primary" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un cocktail</button>
+            <button class="btn btn-pink" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un cocktail</button>
         </div>
         
         <div id="addForm" class="admin-form" style="display: none;">
-            <h3>Ajouter un cocktail</h3>
+            <h3 class="text-pink">Ajouter un cocktail</h3>
             <form id="cocktailForm" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="name">Nom:</label>
-                    <input type="text" id="name" class="form-control" required>
+                    <label for="name" class="text-pink">Nom:</label>
+                    <input type="text" id="name" class="form-control bg-sable" required>
                 </div>
                 <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea id="description" class="form-control" required></textarea>
+                    <label for="description" class="text-pink">Description:</label>
+                    <textarea id="description" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="alcohol">Type:</label>
-                    <select id="alcohol" class="form-control" required>
+                    <label for="alcohol" class="text-pink">Type:</label>
+                    <select id="alcohol" class="form-control bg-sable" required>
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="ingredients">Ingrédients:</label>
-                    <textarea id="ingredients" class="form-control" required></textarea>
+                    <label for="ingredients" class="text-pink">Ingrédients:</label>
+                    <textarea id="ingredients" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="recipe">Recette:</label>
-                    <textarea id="recipe" class="form-control" required></textarea>
+                    <label for="recipe" class="text-pink">Recette:</label>
+                    <textarea id="recipe" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="image">Image:</label>
-                    <input type="file" id="image" class="form-control" accept="image/*">
+                    <label for="image" class="text-pink">Image:</label>
+                    <input type="file" id="image" class="form-control bg-sable" accept="image/*">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="saveCocktail()">Enregistrer</button>
@@ -52,35 +52,35 @@
         </div>
         
         <div id="editForm" class="admin-form" style="display: none;">
-            <h3>Modifier un cocktail</h3>
+            <h3 class="text-pink">Modifier un cocktail</h3>
             <form id="editCocktailForm" enctype="multipart/form-data">
                 <input type="hidden" id="editId">
                 <div class="form-group">
-                    <label for="editName">Nom:</label>
-                    <input type="text" id="editName" class="form-control" required>
+                    <label for="editName" class="text-pink">Nom:</label>
+                    <input type="text" id="editName" class="form-control bg-sable" required>
                 </div>
                 <div class="form-group">
-                    <label for="editDescription">Description:</label>
-                    <textarea id="editDescription" class="form-control" required></textarea>
+                    <label for="editDescription" class="text-pink">Description:</label>
+                    <textarea id="editDescription" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editAlcohol">Type:</label>
-                    <select id="editAlcohol" class="form-control" required>
+                    <label for="editAlcohol" class="text-pink">Type:</label>
+                    <select id="editAlcohol" class="form-control bg-sable" required>
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="editIngredients">Ingrédients:</label>
-                    <textarea id="editIngredients" class="form-control" required></textarea>
+                    <label for="editIngredients" class="text-pink">Ingrédients:</label>
+                    <textarea id="editIngredients" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editRecipe">Recette:</label>
-                    <textarea id="editRecipe" class="form-control" required></textarea>
+                    <label for="editRecipe" class="text-pink">Recette:</label>
+                    <textarea id="editRecipe" class="form-control bg-sable" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="editImage">Image:</label>
-                    <input type="file" id="editImage" class="form-control" accept="image/*">
+                    <label for="editImage" class="text-pink">Image:</label>
+                    <input type="file" id="editImage" class="form-control bg-sable" accept="image/*">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="updateCocktail()">Mettre à jour</button>
@@ -89,7 +89,7 @@
             </form>
         </div>
         
-        <table class="admin-table">
+        <table class="admin-table table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -109,7 +109,6 @@
     </div>
 
     <script>
-        // Charger les cocktails au chargement de la page
         document.addEventListener('DOMContentLoaded', loadCocktails);
         
         function loadCocktails() {
@@ -149,7 +148,7 @@
                     document.getElementById('cocktailsTableBody').innerHTML = '<tr><td colspan="6" class="text-center">Erreur de chargement</td></tr>';
                 });
         }
-        
+
         function saveCocktail() {
             const formData = new FormData();
             formData.append('name', document.getElementById('name').value);
@@ -178,7 +177,7 @@
                 alert('Erreur lors de la sauvegarde du cocktail');
             });
         }
-        
+
         function deleteCocktail(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce cocktail ?')) {
                 fetch(`/api/cocktails/${id}`, {
@@ -199,7 +198,6 @@
             fetch(`/api/cocktails/${id}`)
                 .then(response => response.json())
                 .then(cocktail => {
-                    // La réponse est un tableau, on prend le premier élément
                     const cocktailData = Array.isArray(cocktail) ? cocktail[0] : cocktail;
                     
                     if (!cocktailData) {
@@ -221,7 +219,6 @@
         }
 
         function updateCocktail() {
-            const id = document.getElementById('editId').value;
             const formData = new FormData();
             formData.append('name', document.getElementById('editName').value);
             formData.append('description', document.getElementById('editDescription').value);
@@ -234,14 +231,16 @@
                 formData.append('image', imageFile);
             }
             
+            const id = document.getElementById('editId').value;
+
             fetch(`/api/cocktails/${id}`, {
                 method: 'PUT',
                 body: formData
             })
             .then(response => {
                 if (!response.ok) throw new Error('Erreur lors de la mise à jour');
-                document.getElementById('editForm').style.display = 'none';
                 loadCocktails();
+                document.getElementById('editForm').style.display = 'none';
             })
             .catch(error => {
                 console.error('Erreur:', error);

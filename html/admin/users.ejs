@@ -6,16 +6,16 @@
     <title>Gestion des Utilisateurs</title>
     <%- include('../partials/header') %>
 </head>
-<body class="admin-page">
+<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
     <div class="admin-container">
-        <h1>Gestion des Utilisateurs</h1>
+        <h1 class="text-center text-pink">Gestion des Utilisateurs</h1>
         
         <!-- Stocker l'ID et le rôle de l'utilisateur connecté dans des éléments cachés -->
         <input type="hidden" id="currentUserId" value="<%- currentUserId %>">
         <input type="hidden" id="currentUserRole" value="<%- currentUserRole %>">
         
-        <div class="admin-actions">
-            <button class="btn btn-primary" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un utilisateur</button>
+        <div class="admin-actions text-center">
+            <button class="btn btn-pink" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un utilisateur</button>
         </div>
         
         <div id="addForm" class="admin-form" style="display: none;">
@@ -37,7 +37,7 @@
                     <label for="role">Rôle:</label>
                     <select id="role" class="form-control" required>
                         <option value="user">Utilisateur</option>
-                        ${currentUserRole === 'owner' ? `
+                        ${currentUserRole === 'owner' ? ` 
                             <option value="admin">Administrateur</option>
                             <option value="owner">Propriétaire</option>
                         ` : ''}
@@ -83,7 +83,7 @@
             </form>
         </div>
         
-        <table class="admin-table">
+        <table class="admin-table table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -105,11 +105,11 @@
     <script>
         // Charger les utilisateurs au chargement de la page
         document.addEventListener('DOMContentLoaded', loadUsers);
-        
+
         // ID et rôle de l'utilisateur connecté
         const currentUserId = parseInt(document.getElementById('currentUserId').value);
         const currentUserRole = document.getElementById('currentUserRole').value;
-        
+
         function loadUsers() {
             fetch('/api/users')
                 .then(response => response.json())
@@ -164,7 +164,7 @@
                     document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6" class="text-center">Erreur de chargement</td></tr>';
                 });
         }
-        
+
         function saveUser() {
             const userData = {
                 username: document.getElementById('username').value,
@@ -172,7 +172,7 @@
                 password: document.getElementById('password').value,
                 role: document.getElementById('role').value
             };
-            
+
             fetch('/api/users', {
                 method: 'POST',
                 headers: {
@@ -195,7 +195,7 @@
                 alert(error.message || 'Erreur lors de la sauvegarde de l\'utilisateur');
             });
         }
-        
+
         function editUser(id) {
             fetch(`/api/users/${id}`)
                 .then(response => {
@@ -219,7 +219,7 @@
                     alert(error.message || 'Erreur lors du chargement de l\'utilisateur');
                 });
         }
-        
+
         function updateUser() {
             const id = document.getElementById('editId').value;
             const userData = {
@@ -227,13 +227,13 @@
                 email: document.getElementById('editEmail').value,
                 role: document.getElementById('editRole').value
             };
-            
+
             // Ajouter le mot de passe seulement s'il est fourni
             const password = document.getElementById('editPassword').value;
             if (password) {
                 userData.password = password;
             }
-            
+
             fetch(`/api/users/${id}`, {
                 method: 'PUT',
                 headers: {
@@ -255,7 +255,7 @@
                 alert(error.message || 'Erreur lors de la mise à jour de l\'utilisateur');
             });
         }
-        
+
         function deleteUser(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
                 fetch(`/api/users/${id}`, {
