@@ -4,6 +4,7 @@
     background-size: 200% 200%;
     animation: gradientShift 10s ease infinite;
   }
+
   
   @keyframes gradientShift {
     0% { background-position: 0% 50%; }
@@ -59,4 +60,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.table-image {
+  width: 5em;
+  height: 5em;
+  vertical-align: middle;
+  object-fit: contain; /* Pour que l’image garde ses proportions */
+  margin-right: 0.3em;  /* Un petit espace entre l’image et le texte, si besoin */
 }

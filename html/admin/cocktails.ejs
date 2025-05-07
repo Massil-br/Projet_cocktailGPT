@@ -124,10 +124,11 @@
                                 <tr>
                                     <td>${cocktail.id}</td>
                                     <td>
-                                        ${cocktail.image ? 
-                                            `<img src="${cocktail.image}" alt="${cocktail.name}" class="table-image">` : 
+                                            ${cocktail.image ? 
+                                            `<img src="/${cocktail.image}" alt="${cocktail.name}" class="table-image">` : 
                                             'Pas d\'image'}
                                     </td>
+
                                     <td>${cocktail.name}</td>
                                     <td>${cocktail.description}</td>
                                     <td>${cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool'}</td>
