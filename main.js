@@ -18,12 +18,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configuration de express-session
 app.use(session({
-    secret: 'votre_secret_key', // À changer en production
+    secret: 'votre_secret_key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Mettre à true en production avec HTTPS
-        maxAge: 3600000 // 1 heure
+        secure: false,  // Garder false pour développement sans HTTPS
+        httpOnly: true, // Empêche l'accès aux cookies via JS (bon pour la sécurité)
+        maxAge: 3600000, // 1 heure
+        sameSite: 'Lax', // Important pour la compatibilité avec les navigateurs modernes
     }
 }));
 
