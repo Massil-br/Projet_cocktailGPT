@@ -4,6 +4,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 
+
+
 // Configuration de multer pour l'upload d'images
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -244,3 +246,28 @@ export async function getCocktailDetailsById(id) {
 }
 
 
+export async function getRandomCocktailSuggestion() {
+    try {
+        // Récupère tous les IDs valides
+        const rows = await runQuery('SELECT id FROM cocktails');
+        const allIds = rows.map(row => row.id);
+
+        // Mélange les IDs
+        for (let i = allIds.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allIds[i], allIds[j]] = [allIds[j], allIds[i]];
+        }
+
+        // Prend jusqu'à 6 IDs aléatoires
+        const selectedIds = allIds.slice(0, Math.min(6, allIds.length));
+
+        // Requête SQL avec tous les IDs d’un coup
+        const placeholders = selectedIds.map(() => '?').join(', ');
+        const cocktails = await runQuery(`SELECT * FROM cocktails WHERE id IN (${placeholders})`, selectedIds);
+
+        return cocktails;
+    } catch (err) {
+        console.error('Erreur lors de la récupération des cocktails de suggestion', err);
+        throw err;
+    }
+}

@@ -1,13 +1,21 @@
 import express from 'express';
 import { renderTemplate } from '../helpers/renderTemplate.js'; 
 import { authenticateUser } from '../middlewares/auth.js';
-import { getCocktailsList, getCocktailDetailsById, researchCocktails } from '../controllers/cocktailController.js';
+import { getCocktailsList, getCocktailDetailsById, researchCocktails, getRandomCocktailSuggestion } from '../controllers/cocktailController.js';
 
 const router = express.Router();
 
 router.get('/',async (req, res) => {
-    let data ={};
-    renderTemplate(res, 'index', data)
+    let research;
+    let cocktails;
+    if (req.query.research) {
+             cocktails = await researchCocktails(req.query.research);
+            research = req.query.research;
+    }else {
+            cocktails = await getRandomCocktailSuggestion();
+            research = null;
+    }
+    renderTemplate(res, 'index', {cocktails, research});
 });
 
 router.get('/contact',async (req,res) =>{

@@ -10,7 +10,38 @@
     
 </head>
 <body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
-    
+     <div class="container mt-5 pt-4 pt-md-5"> <!-- pt-4 pour padding en petit écran, pt-md-5 pour plus grand écran -->
+        <h1 class="mb-4">Liste des Cocktails</h1>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <% if (cocktails && cocktails.length > 0) { %>
+                <% cocktails.forEach(cocktail => { %>
+                    <div class="col">
+                        <div class="card h-100">
+                            <% if (cocktail.image) { %>
+                                <img src="<%= cocktail.image %>" class="card-img-top cocktail-image" alt="<%= cocktail.name %>">
+                            <% } else { %>
+                                <div class="d-flex justify-content-center align-items-center cocktail-image-placeholder">
+                                    <span>Image non disponible</span>
+                                </div>
+                            <% } %>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= cocktail.name %></h5>
+                                <p class="card-text"><%= cocktail.description %></p>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn btn-primary">Voir les détails</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="alert alert-info col-12">
+                    Aucun cocktail trouvé.
+                </div>
+            <% } %>
+        </div>
+    </div>
    
    
 </body>
