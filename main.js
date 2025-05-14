@@ -8,6 +8,7 @@ import authRoutes from './src/routes/authRoutes.js';
 import mainRoutes from './src/routes/mainRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import { verifySession } from './src/controllers/authController.js';
+import { getFortniteSkins } from './src/routes/skins.js';
 
 const PORT = 3000; // port de sortie
 const app = express(); // app qui gérera le serveur
@@ -51,6 +52,8 @@ app.use((req, res, next) => {
     res.locals.user = req.user;
     next();
 });
+
+app.get('/api/skins', getFortniteSkins); // Route pour récupérer les skins Fortnite
 
 app.use('/api', apiRoutes); // application de la route /api pour accéder aux requêtes d'api
 app.use('/auth', authRoutes);

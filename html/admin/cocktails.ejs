@@ -44,10 +44,43 @@
                     <label for="image" class="text-pink">Image:</label>
                     <input type="file" id="image" class="form-control bg-sable" accept="image/*">
                 </div>
+                <div>
+                    <select id="skin-select"></select>
+                        <img id="skin-preview" src="" alt="Preview du skin" />
+
+                        <script>
+                        fetch('/api/skins')
+                        .then(res => res.json())
+                        .then(skins => {
+                            const select = document.getElementById('skin-select');
+                            skins.forEach(skin => {
+                            const option = document.createElement('option');
+                            option.value = skin.name;
+                            option.dataset.img = skin.imageUrl;
+                            option.textContent = skin.name;
+                            select.appendChild(option);
+                            });
+                        });
+
+                        document.getElementById('skin-select').addEventListener('change', function () {
+                        const selected = this.selectedOptions[0];
+                        const imgUrl = selected.dataset.img;
+                        const name = selected.value;
+
+                        document.getElementById('api_skin_name').value = name;
+                        document.getElementById('api_skin_url').value = imgUrl;
+                        document.getElementById('skin-preview').src = imgUrl;
+                        });
+                        </script>
+
+                    <input type="hidden" name="api_skin_name" id="api_skin_name" />
+                    <input type="hidden" name="api_skin_url" id="api_skin_url" />
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="saveCocktail()">Enregistrer</button>
                     <button type="button" class="btn btn-secondary" onclick="document.getElementById('addForm').style.display = 'none'">Annuler</button>
                 </div>
+                
             </form>
         </div>
         
@@ -157,6 +190,8 @@
             formData.append('alcohol', document.getElementById('alcohol').value);
             formData.append('ingredients', document.getElementById('ingredients').value);
             formData.append('recipe', document.getElementById('recipe').value);
+            formData.append('api_skin_name', document.getElementById('api_skin_name').value);
+            formData.append('api_skin_url', document.getElementById('api_skin_url').value);
             
             const imageFile = document.getElementById('image').files[0];
             if (imageFile) {

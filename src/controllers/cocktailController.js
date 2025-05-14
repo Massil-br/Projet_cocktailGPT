@@ -71,7 +71,7 @@ export async function getCocktailById(req, res) {
 
 // Fonction permettant d'ajouter un nouveau cocktail
 export async function createCocktail(req, res) {
-    const { name, description, alcohol, ingredients, recipe } = req.body;
+    const { name, description, alcohol, ingredients, recipe, api_skin_name, api_skin_url } = req.body;
     const imagePath = req.file ? req.file.path : null;
 
     if (!name || !description || !alcohol || !ingredients || !recipe) {
@@ -83,21 +83,31 @@ export async function createCocktail(req, res) {
         return res.status(400).json({ message: 'alcohol value must be alcohol or no_alcohol' });
     }
 
-    const sql = 'INSERT INTO cocktails (name, description, alcohol, ingredients, recipe, image) VALUES (?, ?, ?, ?, ?, ?)';
+    const sql = `INSERT INTO cocktails 
+        (name, description, alcohol, ingredients, recipe, image, api_skin_name, api_skin_url) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
     try {
-        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, imagePath]);
-        const newCocktail = { 
-            id: result.lastID, 
-            name, 
-            description, 
-            alcohol, 
-            ingredients, 
+        const result = await runQuery(sql, [
+            name, description, alcohol, ingredients, recipe, imagePath,
+            api_skin_name,
+            api_skin_url
+        ]);
+
+        const newCocktail = {
+            id: result.lastID,
+            name,
+            description,
+            alcohol,
+            ingredients,
             recipe,
-            image: imagePath 
+            image: imagePath,
+            api_skin_name: api_skin_name,
+            api_skin_url: api_skin_url
         };
+
         res.status(201).json(newCocktail);
     } catch (err) {
-        // Si une erreur se produit, supprimer l'image uploadée
         if (imagePath && fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
         }
@@ -105,6 +115,7 @@ export async function createCocktail(req, res) {
         res.status(500).json({ error: err.message });
     }
 }
+
 
 // Fonction permettant de changer le contenu d'un cocktail
 export async function updateCocktail(req, res) {

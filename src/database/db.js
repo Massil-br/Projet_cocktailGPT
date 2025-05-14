@@ -57,6 +57,22 @@ export const db = new sqlite3.Database("database.db", (err) => {
         recipe TEXT,
         image TEXT
     );`);
+
+     // Ajout conditionnel des colonnes api_skin_name et api_skin_url
+    db.all(`PRAGMA table_info(cocktails);`, (err, columns) => {
+        if (err) {
+            console.error("Erreur lors de la lecture de la table cocktails :", err.message);
+            return;
+        }
+
+        const columnNames = columns.map(col => col.name);
+        if (!columnNames.includes("api_skin_name")) {
+            db.run(`ALTER TABLE cocktails ADD COLUMN api_skin_name TEXT;`);
+        }
+        if (!columnNames.includes("api_skin_url")) {
+            db.run(`ALTER TABLE cocktails ADD COLUMN api_skin_url TEXT;`);
+        }
+    });
 });
 
 // Fonction pour ajouter un utilisateur
