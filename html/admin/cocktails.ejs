@@ -13,6 +13,8 @@
         <div class="admin-actions">
             <button class="btn btn-pink" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un cocktail</button>
         </div>
+
+        <!-- ==================================================FORM ADD COKTAILS================================================================ -->
         
         <div id="addForm" class="admin-form" style="display: none;">
             <h3 class="text-pink">Ajouter un cocktail</h3>
@@ -48,31 +50,6 @@
                     <select id="skin-select"></select>
                         <img id="skin-preview" src="" alt="Preview du skin" />
 
-                        <script>
-                        fetch('/api/skins')
-                        .then(res => res.json())
-                        .then(skins => {
-                            const select = document.getElementById('skin-select');
-                            skins.forEach(skin => {
-                            const option = document.createElement('option');
-                            option.value = skin.name;
-                            option.dataset.img = skin.imageUrl;
-                            option.textContent = skin.name;
-                            select.appendChild(option);
-                            });
-                        });
-
-                        document.getElementById('skin-select').addEventListener('change', function () {
-                        const selected = this.selectedOptions[0];
-                        const imgUrl = selected.dataset.img;
-                        const name = selected.value;
-
-                        document.getElementById('api_skin_name').value = name;
-                        document.getElementById('api_skin_url').value = imgUrl;
-                        document.getElementById('skin-preview').src = imgUrl;
-                        });
-                        </script>
-
                     <input type="hidden" name="api_skin_name" id="api_skin_name" />
                     <input type="hidden" name="api_skin_url" id="api_skin_url" />
                 </div>
@@ -83,6 +60,8 @@
                 
             </form>
         </div>
+
+        <!-- ==================================================FORM EDIT COKTAILS================================================================ -->
         
         <div id="editForm" class="admin-form" style="display: none;">
             <h3 class="text-pink">Modifier un cocktail</h3>
@@ -115,12 +94,21 @@
                     <label for="editImage" class="text-pink">Image:</label>
                     <input type="file" id="editImage" class="form-control bg-sable" accept="image/*">
                 </div>
+                <div>
+                    <select id="edit-skin-select"></select>
+                        <img id="edit-skin-preview" src="" alt="Preview du skin" />
+                    <input type="hidden" name="api_skin_name" id="edit_api_skin_name" />
+                    <input type="hidden" name="api_skin_url" id="edit_api_skin_url" />
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="updateCocktail()">Mettre à jour</button>
                     <button type="button" class="btn btn-secondary" onclick="document.getElementById('editForm').style.display = 'none'">Annuler</button>
                 </div>
             </form>
         </div>
+
+        <!-- ==================================================TABLE COKTAILS================================================================ -->
+        <h3 class="text-pink">Liste des cocktails</h3>
         
         <table class="admin-table table table-striped">
             <thead>
@@ -141,8 +129,59 @@
         </table>
     </div>
 
+    <!-- ===================================================SCRIPT================================================================================= -->
+
     <script>
         document.addEventListener('DOMContentLoaded', loadCocktails);
+
+        
+        fetch('/api/skins')
+        .then(res => res.json())
+        .then(skins => {
+            const select = document.getElementById('skin-select');
+            skins.forEach(skin => {
+            if (!skin.name || !skin.imageUrl) return;
+            const option = document.createElement('option');
+            option.value = skin.name;
+            option.dataset.img = skin.imageUrl;
+            option.textContent = skin.name;
+            select.appendChild(option);
+            });
+        });
+
+        document.getElementById('skin-select').addEventListener('change', function () {
+        const selected = this.selectedOptions[0];
+        const imgUrl = selected.dataset.img;
+        const name = selected.value;
+
+        document.getElementById('api_skin_name').value = name;
+        document.getElementById('api_skin_url').value = imgUrl;
+        document.getElementById('skin-preview').src = imgUrl;
+        });
+                
+        fetch('/api/skins')
+        .then(res => res.json())
+        .then(skins => {
+            const select = document.getElementById('edit-skin-select');
+            skins.forEach(skin => {
+            if (!skin.name || !skin.imageUrl) return;
+            const option = document.createElement('option');
+            option.value = skin.name;
+            option.dataset.img = skin.imageUrl;
+            option.textContent = skin.name;
+            select.appendChild(option);
+            });
+        });
+
+        document.getElementById('edit-skin-select').addEventListener('change', function () {
+        const selected = this.selectedOptions[0];
+        const imgUrl = selected.dataset.img;
+        const name = selected.value;
+
+        document.getElementById('edit_api_skin_name').value = name;
+        document.getElementById('edit_api_skin_url').value = imgUrl;
+        document.getElementById('edit_skin-preview').src = imgUrl;
+        });
         
         function loadCocktails() {
             fetch('/api/cocktails')
@@ -247,6 +286,20 @@
                     document.getElementById('editIngredients').value = cocktailData.ingredients;
                     document.getElementById('editRecipe').value = cocktailData.recipe;
                     document.getElementById('editForm').style.display = 'block';
+                    
+                        const select = document.getElementById('edit-skin-select');
+                    for (let option of select.options) {
+                        if (option.value === cocktailData.api_skin_name) {
+                            option.selected = true;
+                            // Met à jour l'aperçu et les champs cachés
+                            document.getElementById('edit-skin-preview').src = option.dataset.img;
+                            document.getElementById('edit_api_skin_name').value = option.value;
+                            document.getElementById('edit_api_skin_url').value = option.dataset.img;
+                            break;
+                        }
+                    }
+
+                    document.getElementById('editForm').style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
@@ -261,6 +314,8 @@
             formData.append('alcohol', document.getElementById('editAlcohol').value);
             formData.append('ingredients', document.getElementById('editIngredients').value);
             formData.append('recipe', document.getElementById('editRecipe').value);
+            formData.append('api_skin_name', document.getElementById('edit_api_skin_name').value);
+            formData.append('api_skin_url', document.getElementById('edit_api_skin_url').value);
             
             const imageFile = document.getElementById('editImage').files[0];
             if (imageFile) {

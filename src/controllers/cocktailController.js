@@ -74,7 +74,7 @@ export async function createCocktail(req, res) {
     const { name, description, alcohol, ingredients, recipe, api_skin_name, api_skin_url } = req.body;
     const imagePath = req.file ? req.file.path : null;
 
-    if (!name || !description || !alcohol || !ingredients || !recipe) {
+    if (!name || !description || !alcohol || !ingredients || !recipe || !api_skin_name || !api_skin_url) {
         setTempCookie(res, 'name, description, alcohol, ingredients, recipe required');
         return res.status(400).json({ message: 'name, description, alcohol, ingredients, recipe required' });
     }
@@ -120,11 +120,11 @@ export async function createCocktail(req, res) {
 // Fonction permettant de changer le contenu d'un cocktail
 export async function updateCocktail(req, res) {
     const id = parseInt(req.params.id);
-    const { name, description, alcohol, ingredients, recipe } = req.body;
+    const { name, description, alcohol, ingredients, recipe, api_skin_name, api_skin_url } = req.body;
     const imagePath = req.file ? req.file.path : null;
 
-    if (!name || !description || !alcohol || !ingredients || !recipe) {
-        setTempCookie(res, 'name, description, alcohol, ingredients, recipe required');
+    if (!name || !description || !alcohol || !ingredients || !recipe || !api_skin_name || !api_skin_url) {
+        setTempCookie(res, 'name, description, alcohol, ingredients, recipe  and a skin is required');
         return res.status(400).json({ message: 'name, description, alcohol, ingredients, recipe required' });
     }
     if (alcohol !== 'alcohol' && alcohol !== 'no_alcohol') {
@@ -140,8 +140,8 @@ export async function updateCocktail(req, res) {
         // Utiliser l'ancienne image si aucune nouvelle image n'est fournie
         const finalImagePath = imagePath || oldImagePath;
 
-        const sql = 'UPDATE cocktails SET name = ?, description = ?, alcohol = ?, ingredients = ?, recipe = ?, image = ? WHERE id = ?';
-        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, finalImagePath, id]);
+        const sql = 'UPDATE cocktails SET name = ?, description = ?, alcohol = ?, ingredients = ?, recipe = ?, image = ?, api_skin_name = ?, api_skin_url = ? WHERE id = ?';
+        const result = await runQuery(sql, [name, description, alcohol, ingredients, recipe, finalImagePath, api_skin_name, api_skin_url, id]);
 
         if (result.changes === 0) {
             setTempCookie(res, 'Cocktail non trouvé');
@@ -160,7 +160,9 @@ export async function updateCocktail(req, res) {
             alcohol, 
             ingredients, 
             recipe,
-            image: finalImagePath 
+            image: finalImagePath,
+            api_skin_name: api_skin_name,
+            api_skin_url: api_skin_url
         };
         res.status(200).json(updatedCocktail);
     } catch (err) {
