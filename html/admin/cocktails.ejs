@@ -11,7 +11,7 @@
         <h1 class="text-pink">Gestion des Cocktails</h1>
         
         <div class="admin-actions">
-            <button class="btn btn-pink" onclick="document.getElementById('addForm').style.display = 'block'">Ajouter un cocktail</button>
+            <button class="btn btn-pink" onclick="showAddForm()">Ajouter un cocktail</button>
         </div>
 
         <!-- ==================================================FORM ADD COKTAILS================================================================ -->
@@ -55,7 +55,7 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="saveCocktail()">Enregistrer</button>
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('addForm').style.display = 'none'">Annuler</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeForms()">Annuler</button>
                 </div>
                 
             </form>
@@ -102,31 +102,32 @@
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-success" onclick="updateCocktail()">Mettre à jour</button>
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('editForm').style.display = 'none'">Annuler</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeForms()">Annuler</button>
                 </div>
             </form>
         </div>
 
         <!-- ==================================================TABLE COKTAILS================================================================ -->
-        <h3 class="text-pink">Liste des cocktails</h3>
-        
-        <table class="admin-table table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Nom</th>
-                    <th>Description</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="cocktailsTableBody">
-                <tr>
-                    <td colspan="6" class="text-center">Chargement...</td>
-                </tr>
-            </tbody>
-        </table>
+        <div id="cocktailsTable">
+            <h3 id="cocktailsTable" class="text-pink">Liste des cocktails</h3>
+            <table class="admin-table table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cocktailsTableBody">
+                    <tr>
+                        <td colspan="6" class="text-center">Chargement...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ===================================================SCRIPT================================================================================= -->
@@ -182,6 +183,17 @@
         document.getElementById('edit_api_skin_url').value = imgUrl;
         document.getElementById('edit_skin-preview').src = imgUrl;
         });
+
+        function showAddForm() {
+            document.getElementById('addForm').style.display = 'block';
+            document.getElementById('cocktailsTable').style.display = 'none';
+        }
+
+        function closeForms() {
+            document.getElementById('addForm').style.display = 'none';
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('cocktailsTable').style.display = '';
+        }
         
         function loadCocktails() {
             fetch('/api/cocktails')
@@ -245,6 +257,7 @@
                 if (!response.ok) throw new Error('Erreur lors de la sauvegarde');
                 document.getElementById('cocktailForm').reset();
                 document.getElementById('addForm').style.display = 'none';
+                document.getElementById('cocktailsTable').style.display = '';
                 loadCocktails();
             })
             .catch(error => {
@@ -286,7 +299,7 @@
                     document.getElementById('editIngredients').value = cocktailData.ingredients;
                     document.getElementById('editRecipe').value = cocktailData.recipe;
                     document.getElementById('editForm').style.display = 'block';
-                    
+
                         const select = document.getElementById('edit-skin-select');
                     for (let option of select.options) {
                         if (option.value === cocktailData.api_skin_name) {
@@ -300,6 +313,7 @@
                     }
 
                     document.getElementById('editForm').style.display = 'block';
+                    document.getElementById('cocktailsTable').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
@@ -332,6 +346,7 @@
                 if (!response.ok) throw new Error('Erreur lors de la mise à jour');
                 loadCocktails();
                 document.getElementById('editForm').style.display = 'none';
+                document.getElementById('cocktailsTable').style.display = '';
             })
             .catch(error => {
                 console.error('Erreur:', error);
