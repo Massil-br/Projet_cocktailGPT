@@ -3,28 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Style.css">
     <title>Connexion</title>
     <%- include('partials/header') %>
 </head>
-<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
-
-    <div class="container p-4 bg-light rounded shadow-lg" style="max-width: 500px; width: 100%;">
-        <form action="/auth/loginTraitment" method="post" class="auth-form">
-            <h2 class="text-center mb-4 text-pink fw-bold">Connexion</h2>
-
-            <div class="mb-3">
-                <label for="email" class="form-label">Adresse email</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Entrez votre email" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" name="password" id="password" placeholder="Entrez votre mot de passe" required>
-            </div>
-
-            <button type="submit" class="btn btn-pink w-100">Se connecter</button>
-        </form>
+<body>
+    <!-- From Uiverse.io by Cksunandh --> 
+<div class="login-container">
+  <form action="/auth/loginTraitment" method="post" class="login-form">
+    <p class="heading">Login</p>
+    <p class="paragraph">Login to your account</p>
+    <div class="input-group">
+      <input
+        required=""
+        placeholder="Username"
+        id="username name="
+        type="text"
+      />
     </div>
+    <div class="input-group">
+      <input
+        required=""
+        placeholder="Password"
+        name="password"
+        id="password"
+        type="password"
+      />
+    </div>
+    <button type="submit">Login</button>
+    <div class="bottom-text">
+      <p>Don't have an account? <a href="/register">Sign Up</a></p>
+    </div>
+  </form>
+</div>
+
 
 </body>
 </html>
