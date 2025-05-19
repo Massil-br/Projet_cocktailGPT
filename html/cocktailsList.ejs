@@ -10,9 +10,10 @@
     <%- include('partials/header') %>
 
     <div class="container mt-5 pt-4 pt-md-5"> <!-- pt-4 pour padding en petit écran, pt-md-5 pour plus grand écran -->
-        <h1 class="mb-4">Liste des Cocktails</h1>
+        <h1 class="cocktail-title">Liste des Cocktails</h1>
 
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        <div class="cocktail-grid">
             <% if (cocktails && cocktails.length > 0) { %>
                 <% cocktails.forEach(cocktail => { %>
                     <div class="col">
@@ -29,7 +30,7 @@
                                 <p class="card-text"><%= cocktail.description %></p>
                             </div>
                             <div class="card-footer text-center">
-                                <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn btn-primary">Voir les détails</a>
+                                <a href="/cocktailDetail?id=<%= cocktail.id %><%= research ? '&research=' + research : '' %>" class="btn-fortnite">Voir les détails</a>
                             </div>
                         </div>
                     </div>
