@@ -417,13 +417,6 @@ h1.cocktail-title {
   gap: 2rem;
 }
 
-@media (min-width: 768px) {
-  .details-content {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-}
-
 .visual-block {
   display: flex;
   flex-direction: column;
@@ -431,12 +424,31 @@ h1.cocktail-title {
   flex: 1;
 }
 
+@media (min-width: 768px) {
+  .visual-block {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+}
+
 .details-image,
 .skin-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
   border-radius: 12px;
+  object-fit: cover;
+}
+
+
+.details-image {
+  width: 100%;
+  max-width: 480px;
+  height: 500px;
+}
+
+.skin-image {
+  width: 100%;
+  max-width: 480px;
+  height: 500px;
 }
 
 .details-info {
