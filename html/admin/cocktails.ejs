@@ -4,113 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Cocktails</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+
     <%- include('../partials/header') %>
 </head>
-<body class="bg-gradient-tropical min-vh-100 d-flex justify-content-center align-items-center">
-    <div class="admin-container">
-        <h1 class="text-pink">Gestion des Cocktails</h1>
+<body class="cocktail-page">
+    <div>
+        <h1 class="cocktail-title-table">Gestion des Cocktails</h1>
         
-        <div class="admin-actions">
-            <button class="btn btn-pink" onclick="showAddForm()">Ajouter un cocktail</button>
+        <div class="add-button-container-table" id="add-btn">
+            <button onclick="showAddForm()">Ajouter un cocktail</button>
         </div>
 
-        <!-- ==================================================FORM ADD COKTAILS================================================================ -->
-        
-        <div id="addForm" class="admin-form" style="display: none;">
-            <h3 class="text-pink">Ajouter un cocktail</h3>
+        <!-- Formulaire d'ajout -->
+        <div id="addForm" style="display: none;">
+            <h3>Ajouter un cocktail</h3>
             <form id="cocktailForm" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="name" class="text-pink">Nom:</label>
-                    <input type="text" id="name" class="form-control bg-sable" required>
+                <div>
+                    <label for="name">Nom:</label>
+                    <input type="text" id="name" required>
                 </div>
-                <div class="form-group">
-                    <label for="description" class="text-pink">Description:</label>
-                    <textarea id="description" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="description">Description:</label>
+                    <textarea id="description" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="alcohol" class="text-pink">Type:</label>
-                    <select id="alcohol" class="form-control bg-sable" required>
+                <div>
+                    <label for="alcohol">Type:</label>
+                    <select id="alcohol" required>
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="ingredients" class="text-pink">Ingrédients:</label>
-                    <textarea id="ingredients" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="ingredients">Ingrédients:</label>
+                    <textarea id="ingredients" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="recipe" class="text-pink">Recette:</label>
-                    <textarea id="recipe" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="recipe">Recette:</label>
+                    <textarea id="recipe" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="image" class="text-pink">Image:</label>
-                    <input type="file" id="image" class="form-control bg-sable" accept="image/*">
+                <div>
+                    <label for="image">Image:</label>
+                    <input type="file" id="image" accept="image/*">
                 </div>
                 <div>
                     <select id="skin-select"></select>
-                        <img id="skin-preview" src="" alt="Preview du skin" />
-
+                    <img id="skin-preview" src="" alt="Preview du skin" />
                     <input type="hidden" name="api_skin_name" id="api_skin_name" />
                     <input type="hidden" name="api_skin_url" id="api_skin_url" />
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-success" onclick="saveCocktail()">Enregistrer</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeForms()">Annuler</button>
+                <div>
+                    <button type="button" onclick="saveCocktail()">Enregistrer</button>
+                    <button type="button" onclick="closeForms()">Annuler</button>
                 </div>
-                
             </form>
         </div>
 
-        <!-- ==================================================FORM EDIT COKTAILS================================================================ -->
-        
-        <div id="editForm" class="admin-form" style="display: none;">
-            <h3 class="text-pink">Modifier un cocktail</h3>
+        <!-- Formulaire d'édition -->
+        <div id="editForm" style="display: none;">
+            <h3>Modifier un cocktail</h3>
             <form id="editCocktailForm" enctype="multipart/form-data">
                 <input type="hidden" id="editId">
-                <div class="form-group">
-                    <label for="editName" class="text-pink">Nom:</label>
-                    <input type="text" id="editName" class="form-control bg-sable" required>
+                <div>
+                    <label for="editName">Nom:</label>
+                    <input type="text" id="editName" required>
                 </div>
-                <div class="form-group">
-                    <label for="editDescription" class="text-pink">Description:</label>
-                    <textarea id="editDescription" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="editDescription">Description:</label>
+                    <textarea id="editDescription" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="editAlcohol" class="text-pink">Type:</label>
-                    <select id="editAlcohol" class="form-control bg-sable" required>
+                <div>
+                    <label for="editAlcohol">Type:</label>
+                    <select id="editAlcohol" required>
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="editIngredients" class="text-pink">Ingrédients:</label>
-                    <textarea id="editIngredients" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="editIngredients">Ingrédients:</label>
+                    <textarea id="editIngredients" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="editRecipe" class="text-pink">Recette:</label>
-                    <textarea id="editRecipe" class="form-control bg-sable" required></textarea>
+                <div>
+                    <label for="editRecipe">Recette:</label>
+                    <textarea id="editRecipe" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="editImage" class="text-pink">Image:</label>
-                    <input type="file" id="editImage" class="form-control bg-sable" accept="image/*">
+                <div>
+                    <label for="editImage">Image:</label>
+                    <input type="file" id="editImage" accept="image/*">
                 </div>
                 <div>
                     <select id="edit-skin-select"></select>
-                        <img id="edit-skin-preview" src="" alt="Preview du skin" />
+                    <img id="edit-skin-preview" src="" alt="Preview du skin" />
                     <input type="hidden" name="api_skin_name" id="edit_api_skin_name" />
                     <input type="hidden" name="api_skin_url" id="edit_api_skin_url" />
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-success" onclick="updateCocktail()">Mettre à jour</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeForms()">Annuler</button>
+                <div>
+                    <button type="button" onclick="updateCocktail()">Mettre à jour</button>
+                    <button type="button" onclick="closeForms()">Annuler</button>
                 </div>
             </form>
         </div>
 
-        <!-- ==================================================TABLE COKTAILS================================================================ -->
-        <div id="cocktailsTable">
-            <h3 id="cocktailsTable" class="text-pink">Liste des cocktails</h3>
-            <table class="admin-table table table-striped">
+        <!-- Tableau des cocktails -->
+        <div class="table-container">
+            <table class="cocktail-table" id="cocktailsTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -118,17 +116,17 @@
                         <th>Nom</th>
                         <th>Description</th>
                         <th>Type</th>
+                        <th>Skin</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="cocktailsTableBody">
                     <tr>
-                        <td colspan="6" class="text-center">Chargement...</td>
+                        <td colspan="6">Chargement...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
 
     <!-- ===================================================SCRIPT================================================================================= -->
 
@@ -192,6 +190,7 @@
         function closeForms() {
             document.getElementById('addForm').style.display = 'none';
             document.getElementById('editForm').style.display = 'none';
+            document.getElementById('add-btn').style.display = 'block';
             document.getElementById('cocktailsTable').style.display = '';
         }
         
@@ -217,8 +216,13 @@
                                     <td>${cocktail.description}</td>
                                     <td>${cocktail.alcohol === 'alcohol' ? 'Avec alcool' : 'Sans alcool'}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteCocktail(${cocktail.id})">Supprimer</button>
-                                        <button class="btn btn-sm btn-warning" onclick="editCocktail(${cocktail.id})">Modifier</button>
+                                        ${cocktail.api_skin_url ? 
+                                            `<img src="${cocktail.api_skin_url}" alt="${cocktail.api_skin_name}" class="skin-circle">` : 
+                                            'Pas de skin'}
+                                    </td>
+                                    <td>
+                                        <button class="tbtn tbtn-sm tbtn-danger" onclick="deleteCocktail(${cocktail.id})">Supprimer</button>
+                                        <button class="tbtn tbtn-sm tbtn-warning" onclick="editCocktail(${cocktail.id})">Modifier</button>
                                     </td>
                                 </tr>
                             `;
@@ -258,6 +262,7 @@
                 document.getElementById('cocktailForm').reset();
                 document.getElementById('addForm').style.display = 'none';
                 document.getElementById('cocktailsTable').style.display = '';
+                document.getElementById('add-btn').style.display = 'block';
                 loadCocktails();
             })
             .catch(error => {
@@ -314,6 +319,7 @@
 
                     document.getElementById('editForm').style.display = 'block';
                     document.getElementById('cocktailsTable').style.display = 'none';
+                    document.getElementById('add-btn').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
@@ -347,6 +353,7 @@
                 loadCocktails();
                 document.getElementById('editForm').style.display = 'none';
                 document.getElementById('cocktailsTable').style.display = '';
+                document.getElementById('add-btn').style.display = 'block';
             })
             .catch(error => {
                 console.error('Erreur:', error);
