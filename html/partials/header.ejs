@@ -19,13 +19,8 @@
       <a href="/contact" class="nav-link">Contact</a>
 
       <% if (user && (user.role == "admin" || user.role == "owner")) { %>
-        <div class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Admin</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/admin/users">Users</a></li>
-            <li><a class="dropdown-item" href="/admin/cocktails">Cocktails</a></li>
-          </ul>
-        </div>
+          <a href="/admin/users" class="nav-link">CRUD Users</a>
+          <a href="/admin/cocktails" class="nav-link">CRUD Cocktails</a>
       <% } %>
     </div>
 
