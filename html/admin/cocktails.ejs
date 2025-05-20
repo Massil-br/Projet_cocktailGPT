@@ -13,98 +13,100 @@
     <div>
         <h1 class="cocktail-title-table">Gestion des Cocktails</h1>
         
-        <div class="add-button-container-table" id="add-btn">
+        <div id="add-btn" class="add-button-container-table">
             <button onclick="showAddForm()">Ajouter un cocktail</button>
         </div>
 
         <!-- Formulaire d'ajout -->
-        <div id="addForm" style="display: none;">
-            <h3>Ajouter un cocktail</h3>
-            <form id="cocktailForm" enctype="multipart/form-data">
-                <div>
+        <div id="addForm" class="cocktail-form-container" style="display: none;">
+            <h3 class="cocktail-form-title">Ajouter un cocktail</h3>
+            <form id="cocktailForm" class="cocktail-form" enctype="multipart/form-data">
+                <div class="form-group">
                     <label for="name">Nom:</label>
-                    <input type="text" id="name" required>
+                    <input type="text" id="name" required class="form-input">
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea id="description" required></textarea>
+                    <textarea id="description" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="alcohol">Type:</label>
-                    <select id="alcohol" required>
+                    <select id="alcohol" required class="form-input">
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="ingredients">Ingrédients:</label>
-                    <textarea id="ingredients" required></textarea>
+                    <textarea id="ingredients" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="recipe">Recette:</label>
-                    <textarea id="recipe" required></textarea>
+                    <textarea id="recipe" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="image">Image:</label>
-                    <input type="file" id="image" accept="image/*">
+                    <input type="file" id="image" accept="image/*" class="form-input">
                 </div>
-                <div>
-                    <select id="skin-select"></select>
-                    <img id="skin-preview" src="" alt="Preview du skin" />
+                <div class="form-group">
+                    <select id="skin-select" class="form-input"></select>
+                    <img id="skin-preview" src="" alt="Preview du skin" class="skin-preview" />
                     <input type="hidden" name="api_skin_name" id="api_skin_name" />
                     <input type="hidden" name="api_skin_url" id="api_skin_url" />
                 </div>
-                <div>
-                    <button type="button" onclick="saveCocktail()">Enregistrer</button>
-                    <button type="button" onclick="closeForms()">Annuler</button>
+                <div class="form-buttons">
+                    <button type="button" onclick="saveCocktail()" class="btn-green">Enregistrer</button>
+                    <button type="button" onclick="closeForms()" class="btn-red">Annuler</button>
                 </div>
             </form>
         </div>
 
+
         <!-- Formulaire d'édition -->
-        <div id="editForm" style="display: none;">
-            <h3>Modifier un cocktail</h3>
-            <form id="editCocktailForm" enctype="multipart/form-data">
+        <div id="editForm" class="cocktail-form-container" style="display: none;">
+            <h3 class="cocktail-form-title">Modifier un cocktail</h3>
+            <form id="editCocktailForm" class="cocktail-form" enctype="multipart/form-data">
                 <input type="hidden" id="editId">
-                <div>
+                <div class="form-group">
                     <label for="editName">Nom:</label>
-                    <input type="text" id="editName" required>
+                    <input type="text" id="editName" required class="form-input">
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="editDescription">Description:</label>
-                    <textarea id="editDescription" required></textarea>
+                    <textarea id="editDescription" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="editAlcohol">Type:</label>
-                    <select id="editAlcohol" required>
+                    <select id="editAlcohol" required class="form-input">
                         <option value="alcohol">Avec alcool</option>
                         <option value="no_alcohol">Sans alcool</option>
                     </select>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="editIngredients">Ingrédients:</label>
-                    <textarea id="editIngredients" required></textarea>
+                    <textarea id="editIngredients" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="editRecipe">Recette:</label>
-                    <textarea id="editRecipe" required></textarea>
+                    <textarea id="editRecipe" required class="form-input"></textarea>
                 </div>
-                <div>
+                <div class="form-group">
                     <label for="editImage">Image:</label>
-                    <input type="file" id="editImage" accept="image/*">
+                    <input type="file" id="editImage" accept="image/*" class="form-input">
                 </div>
-                <div>
-                    <select id="edit-skin-select"></select>
-                    <img id="edit-skin-preview" src="" alt="Preview du skin" />
+                <div class="form-group">
+                    <select id="edit-skin-select" class="form-input"></select>
+                    <img id="edit-skin-preview" src="" alt="Preview du skin" class="skin-preview" />
                     <input type="hidden" name="api_skin_name" id="edit_api_skin_name" />
                     <input type="hidden" name="api_skin_url" id="edit_api_skin_url" />
                 </div>
-                <div>
-                    <button type="button" onclick="updateCocktail()">Mettre à jour</button>
-                    <button type="button" onclick="closeForms()">Annuler</button>
+                <div class="form-buttons">
+                    <button type="button" onclick="updateCocktail()" class="btn-green">Mettre à jour</button>
+                    <button type="button" onclick="closeForms()" class="btn-red">Annuler</button>
                 </div>
             </form>
         </div>
+
 
         <!-- Tableau des cocktails -->
         <div class="table-container">
@@ -185,12 +187,13 @@
         function showAddForm() {
             document.getElementById('addForm').style.display = 'block';
             document.getElementById('cocktailsTable').style.display = 'none';
+            document.getElementById('add-btn').style.display = 'none';
         }
 
         function closeForms() {
             document.getElementById('addForm').style.display = 'none';
             document.getElementById('editForm').style.display = 'none';
-            document.getElementById('add-btn').style.display = 'block';
+            document.getElementById('add-btn').style.display = 'flex';
             document.getElementById('cocktailsTable').style.display = '';
         }
         
@@ -262,7 +265,7 @@
                 document.getElementById('cocktailForm').reset();
                 document.getElementById('addForm').style.display = 'none';
                 document.getElementById('cocktailsTable').style.display = '';
-                document.getElementById('add-btn').style.display = 'block';
+                document.getElementById('add-btn').style.display = 'flex';
                 loadCocktails();
             })
             .catch(error => {
@@ -353,7 +356,7 @@
                 loadCocktails();
                 document.getElementById('editForm').style.display = 'none';
                 document.getElementById('cocktailsTable').style.display = '';
-                document.getElementById('add-btn').style.display = 'block';
+                document.getElementById('add-btn').style.display = 'flex';
             })
             .catch(error => {
                 console.error('Erreur:', error);
