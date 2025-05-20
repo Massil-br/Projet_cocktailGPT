@@ -15,7 +15,8 @@ router.get('/',async (req, res) => {
             cocktails = await getRandomCocktailSuggestion();
             research = null;
     }
-    renderTemplate(res, 'index', {cocktails, research});
+    res.status(500).redirect("https://enthusiastic-head-573669.framer.app/")
+    //renderTemplate(res, 'index', {cocktails, research});
 });
 
 router.get('/contact',async (req,res) =>{
