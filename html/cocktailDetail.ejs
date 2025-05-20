@@ -13,11 +13,15 @@
         <h1 class="details-title">Détails du Cocktail</h1>
 
         <div class="details-content">
-          <div class="details-image-wrapper">
+          <div class="visual-block">
             <% if (cocktail.image) { %>
               <img src="/<%= cocktail.image %>" class="details-image" alt="<%= cocktail.name %>">
             <% } else { %>
               <div class="image-placeholder">Image non disponible</div>
+            <% } %>
+
+            <% if (cocktail.api_skin_url) { %>
+              <img src="<%= cocktail.api_skin_url %>" class="skin-image" alt="<%= cocktail.api_skin_name %>">
             <% } %>
           </div>
 
@@ -38,11 +42,6 @@
               <h4>Nom du skin associé</h4>
               <% if (cocktail.api_skin_name) { %>
                 <p><%= cocktail.api_skin_name %></p>
-                <% if (cocktail.api_skin_url) { %>
-                  <img src="<%= cocktail.api_skin_url %>" class="skin-image" alt="<%= cocktail.api_skin_name %>">
-                <% } else { %>
-                  <div class="image-placeholder">Image non disponible</div>
-                <% } %>
               <% } else { %>
                 <p>Pas de skin associé</p>
               <% } %>
@@ -62,6 +61,4 @@
     <% } %>
   </div>
 </body>
-
-
 </html>

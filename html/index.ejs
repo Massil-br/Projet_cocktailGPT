@@ -1,14 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Responsive avec iframe</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
 
-    <title>Main</title>
-    
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: 100vh; /* hauteur de la fenêtre */
+      overflow: hidden;
+    }
+
+    .iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-    <iframe src="https://enthusiastic-head-573669-4ddbcbd44.framer.app/" width="1920" height="1080" style="border: none;"></iframe>
+  <div class="iframe-container">
+    <iframe src="https://enthusiastic-head-573669.framer.app/" allowfullscreen></iframe>
+  </div>
 </body>
 </html>

@@ -33,15 +33,15 @@
     <div class="nav-right">
       <% if (user && user.username) { %>
         <span class="username">👋 <%= user.username %></span>
-        <a href="/auth/logout" class="btn btn-primary">Déconnexion</a>
+        <a href="/auth/logout" class="btn-fortnite">Déconnexion</a>
       <% } else { %>
-        <a href="/register" class="btn btn-secondary">Inscription</a>
-        <a href="/login" class="btn btn-primary">Connexion</a>
+        <a href="/register" class="btn-fortnite">Inscription</a>
+        <a href="/login" class="btn-fortnite">Connexion</a>
       <% } %>
 
       <form class="search-form" action="/cocktailsList" method="GET">
         <input class="search-input" type="search" name="research" placeholder="Recherche" />
-        <button class="btn btn-warning" type="submit">Rechercher</button>
+        <button class="btn-fortnite" type="submit">Rechercher</button>
       </form>
     </div>
   </nav>
